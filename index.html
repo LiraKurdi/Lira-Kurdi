@@ -1,1 +1,35 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lira Kurdi ($LKURD)</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@ton/core@latest"></script> <!-- TON SDK -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💸 Lira Kurdi ($LKURD)</h1>
+            <p>Empowering Mesopotamia's Digital Future</p>
+        </header>
+
+        <section id="wallet-section">
+            <div id="wallet-info">
+                <p><strong>Wallet Address:</strong> <span id="wallet-address">Connecting...</span></p>
+                <p><strong>Balance:</strong> <span id="wallet-balance">0 $LKURD</span></p>
+            </div>
+
+            <button id="connect-btn">Connect to TON Wallet</button>
+            <button id="send-btn" disabled>Send $LKURD</button>
+        </section>
+
+        <footer>
+            <p>Powered by TON Blockchain | Lira Kurdi © 2025</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script> <!-- JS Logic -->
+</body>
+</html>
