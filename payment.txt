@@ -1,1 +1,49 @@
-Payment Countries = Turkey, Iran, Iraq, Syria
+========================================
+        LIRA KURDI ($LKURD) PAYMENT GUIDE
+========================================
+
+1️⃣ BASIC PAYMENT INSTRUCTIONS
+------------------------------
+- Ensure your wallet is connected to the TON blockchain.
+- Verify the recipient's wallet address before proceeding.
+- All payments are processed in $LKURD tokens.
+
+📥 To Receive $LKURD:
+   - Share your TON wallet address with the sender.
+   - Ensure your wallet supports $LKURD tokens.
+
+📤 To Send $LKURD:
+   - Enter the recipient’s TON wallet address.
+   - Specify the exact amount of $LKURD to send.
+   - Confirm the transaction and wait for blockchain confirmation.
+
+2️⃣ TRANSACTION FEES
+--------------------
+- **Network Fee (TON Gas):** Dynamic (depends on network load)
+- **$LKURD Transfer Fee:** 0.1% of the transaction amount (minimum 0.01 $LKURD)
+
+3️⃣ PAYMENT CONFIRMATION
+------------------------
+- Average confirmation time: **5-15 seconds** on the TON blockchain.
+- Verify the transaction hash for status tracking.
+
+4️⃣ SECURITY TIPS
+-----------------
+- **ALWAYS** double-check recipient wallet addresses.
+- Do **NOT** share your private keys with anyone.
+- Use only trusted wallets and applications.
+
+5️⃣ REFUND POLICY
+-----------------
+- Crypto transactions are **irreversible**.
+- Lira Kurdi does **NOT** support refunds for incorrect transactions.
+- Contact support only for technical issues, not for transaction errors.
+
+6️⃣ DONATION ADDRESS (FOR PROJECT SUPPORT)
+------------------------------------------
+- Official $LKURD Donation Wallet: `EQC1234abcd5678wxyz...`
+- Your support helps grow the Lira Kurdi ecosystem.
+
+========================================
+      POWERED BY TON BLOCKCHAIN
+========================================
