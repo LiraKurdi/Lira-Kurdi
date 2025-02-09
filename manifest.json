@@ -1,0 +1,35 @@
+{
+  "name": "Lira Kurdi",
+  "short_name": "$LKURD",
+  "description": "A TON-based crypto wallet for Mesopotamia. Manage your $LKURD tokens easily and securely.",
+  "version": "1.0.0",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#1c7ed6",
+  "orientation": "portrait",
+  "lang": "en",
+  "permissions": [
+    "ton_wallet",
+    "clipboard-write",
+    "notifications"
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://github.com/LiraKurdi/Lira-Kurdi"
+    }
+  ]
+}
