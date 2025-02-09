@@ -1,1 +1,58 @@
-Eyyubi Tech
+========================================
+        LIRA KURDI ($LKURD) REFERENCES
+========================================
+
+1️⃣ BLOCKCHAIN & TECHNOLOGY
+---------------------------
+- **TON (The Open Network):** 
+  - Official Site: https://ton.org
+  - Developer Docs: https://docs.ton.org
+  - TON API Reference: https://ton.org/docs/#/api
+
+- **Telegram Mini Apps:** 
+  - Telegram Bots API: https://core.telegram.org/bots/api
+  - Telegram Mini App Guide: https://core.telegram.org/bots/webapps
+
+- **Smart Contract Development:** 
+  - FunC Language for TON: https://ton.org/docs/#/func
+  - TON Solidity Bridge (if applicable): https://ton.org/solidity
+
+2️⃣ CRYPTOCURRENCY STANDARDS
+----------------------------
+- **Token Standards:**
+  - TON Token Standard (TIP-3): https://ton.org/docs/#/standard/TIP-3
+  - Wallet Address Formats: https://ton.org/docs/#/wallets
+
+- **Security Best Practices:**
+  - OWASP Blockchain Security Guidelines: https://owasp.org/www-project-blockchain-security/
+
+3️⃣ DEVELOPMENT TOOLS & LIBRARIES
+---------------------------------
+- **Frontend:**
+  - HTML5 & CSS3 Documentation: https://developer.mozilla.org/en-US/docs/Web
+  - JavaScript Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+
+- **TON SDKs & Libraries:**
+  - TON Web SDK: https://github.com/toncenter/tonweb
+  - TON Connect (Wallet Integration): https://ton.org/docs/#/connect
+
+4️⃣ INSPIRATIONAL PROJECTS
+--------------------------
+- TON Wallet: https://tonkeeper.com
+- Toncoin Explorer: https://tonscan.org
+- NFT Platforms on TON: https://getgems.io
+
+5️⃣ LIRA KURDI OFFICIAL RESOURCES
+---------------------------------
+- GitHub Repository: https://github.com/LiraKurdi/Lira-Kurdi
+- YouTube Channel: *(Link to be added)*
+- Telegram Channel: *(Link to be added)*
+
+6️⃣ MISCELLANEOUS REFERENCES
+----------------------------
+- Cryptocurrency Economics: https://coinmarketcap.com/alexandria
+- Blockchain Glossary: https://blockchainhub.net/blockchain-glossary/
+
+========================================
+    POWERED BY TON BLOCKCHAIN
+========================================
