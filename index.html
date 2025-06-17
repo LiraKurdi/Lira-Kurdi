@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age of Web - Pixel World Map</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="intro" class="intro">
+        <img src="images/logo.png" alt="Age of Web Logo" class="intro-logo">
+    </div>
+    <div id="main-content" class="d-none">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 text-end py-2">
+                    <span class="update-date">Last Updated: June 18, 2025</span>
+                </div>
+            </div>
+            <div id="home" class="page">
+                <div class="map-container">
+                    <canvas id="worldMap"></canvas>
+                    <div class="zoom-controls">
+                        <button class="btn zoom-btn" onclick="zoomIn()"><i class="bi bi-plus"></i></button>
+                        <button class="btn zoom-btn" onclick="zoomOut()"><i class="bi bi-dash"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div id="market" class="page d-none">
+                <h3 class="section-title">Land Marketplace</h3>
+                <div class="market-category">
+                    <h4>Country Lands</h4>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="card market-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Turkey Land</h5>
+                                    <p class="card-text">Buy for 2 Stars!</p>
+                                    <a href="https://tribute.app/@your-tribute-account" target="_blank" class="btn btn-outline-light">Purchase</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card market-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Kurdistan Land</h5>
+                                    <p class="card-text">Buy for 3 Stars!</p>
+                                    <a href="https://tribute.app/@your-tribute-account" target="_blank" class="btn btn-outline-light">Purchase</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="market-category">
+                    <h4>Global Lands</h4>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="card market-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Global Land</h5>
+                                    <p class="card-text">Buy for 5 Stars!</p>
+                                    <a href="https://tribute.app/@your-tribute-account" target="_blank" class="btn btn-outline-light">Purchase</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card market-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Premium Land</h5>
+                                    <p class="card-text">Buy for 10 Stars!</p>
+                                    <a href="https://tribute.app/@your-tribute-account" target="_blank" class="btn btn-outline-light">Purchase</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="leaderboard" class="page d-none">
+                <h3 class="section-title">Leaderboard</h3>
+                <div class="placeholder-box">
+                    <p>Coming Soon!</p>
+                </div>
+            </div>
+            <div id="info" class="page d-none">
+                <h3 class="section-title">A New World with Lira Kurdi</h3>
+                <p class="slogan">Ancient civilizations rise on future lands.</p>
+                <div class="info-category">
+                    <h4>Resources</h4>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="card info-banner">
+                                <div class="card-body">
+                                    <h5 class="card-title">Whitepaper</h5>
+                                    <p class="card-text">Discover the project vision.</p>
+                                    <a href="https://your-whitepaper-link.com" target="_blank" class="btn btn-outline-light">Read</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card info-banner">
+                                <div class="card-body">
+                                    <h5 class="card-title">Lira Kurdi</h5>
+                                    <p class="card-text">Learn about LKURD token.</p>
+                                    <a href="https://your-lkurd-info-link.com" target="_blank" class="btn btn-outline-light">Read</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-category">
+                    <h4>Community</h4>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="card info-banner">
+                                <div class="card-body">
+                                    <h5 class="card-title">Telegram</h5>
+                                    <p class="card-text">Join our community!</p>
+                                    <a href="https://t.me/your-telegram-channel" target="_blank" class="btn btn-outline-light"><i class="bi bi-telegram"></i> Join</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card info-banner">
+                                <div class="card-body">
+                                    <h5 class="card-title">X Platform</h5>
+                                    <p class="card-text">Follow us!</p>
+                                    <a href="https://x.com/your-x-account" target="_blank" class="btn btn-outline-light"><i class="bi bi-twitter-x"></i> Follow</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="pixelModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Land Information</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>ID:</strong> <span id="pixelId"></span> <i class="bi bi-copy copy-icon" onclick="copyPixelId()"></i></p>
+                        <p><strong>Owner:</strong> <span id="pixelOwner"></span></p>
+                        <p><strong>Continent:</strong> <span id="pixelContinent"></span></p>
+                        <p><strong>Country:</strong> <span id="pixelCountry"></span></p>
+                        <p><strong>Flag:</strong> <img id="pixelFlag" src="" alt="" style="width: 16px; height: 16px;"></p>
+                        <p><strong>Features:</strong></p>
+                        <ul id="countryFeatures"></ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="buyPixel()">Buy via @tribute</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navbar -->
+        <nav class="navbar fixed-bottom navbar-dark">
+            <div class="container-fluid">
+                <ul class="nav nav-pills nav-fill w-100">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showPage('home')"><i class="bi bi-house"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('market')"><i class="bi bi-shop"></i> Market</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('leaderboard')"><i class="bi bi-trophy"></i> Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('info')"><i class="bi bi-info-circle"></i> Info</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
