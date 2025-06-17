@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.setViewportData({ isExpanded: true });
-        window.Telegram.WebApp.MainButton.hide(); // View Profile kaldır
+        window.Telegram.WebApp.MainButton.hide();
         window.Telegram.WebApp.BackButton.hide();
         loadTransactions();
         checkPremiumStatus();
@@ -21,7 +21,23 @@ window.addEventListener('load', () => {
     document.getElementById('currencySelectProfile').addEventListener('change', (e) => updateBalance(e.target.value));
 });
 
-// Binance API
+function transitionPage(url) {
+    document.getElementById('main-content').classList.add('d-none');
+    document.getElementById('transition').classList.remove('d-none');
+    setTimeout(() => {
+        window.location.href = url;
+    }, 1000);
+}
+
+function checkPremium(appName) {
+    if (appName === 'Hez Dating' && !window.isPremiumUser) {
+        window.Telegram.WebApp.showAlert('Premium required for Hez Dating!');
+        window.Telegram.WebApp.openLink('https://t.me/tribute/app?startapp=suJQ');
+    } else {
+        window.Telegram.WebApp.showAlert(`${appName} is coming soon!`);
+    }
+}
+
 async function fetchPrices() {
     try {
         const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=USDTRY');
