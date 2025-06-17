@@ -20,54 +20,88 @@
                 <p class="slogan">Financial Freedom for Mesopotamia</p>
             </header>
             <main class="container-fluid">
+                <section class="welcome py-5">
+                    <div class="welcome-card mx-auto">
+                        <h2 class="card-title">Welcome, <span id="userName">Guest</span>!</h2>
+                        <p><strong>User ID:</strong> <span id="userId">N/A</span></p>
+                        <div class="balance-list">
+                            <div class="balance-item">
+                                <img src="images/logo.png" alt="LKURD" class="currency-logo">
+                                <span>LKURD</span>
+                                <span id="lkurdBalance">100.00 LKURD - ₺100.00</span>
+                            </div>
+                            <div class="balance-item">
+                                <i class="bi bi-currency-dollar"></i>
+                                <span>USDT</span>
+                                <span id="usdtBalance">0.00 USDT - ₺<span>Loading...</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <section class="farming py-5 text-center">
                     <h2 class="section-title">Earn $LKURD with Farming</h2>
-                    <p class="lead">Claim 8 $LKURD every 15 hours!</p>
                     <div class="farming-card mx-auto">
                         <p><strong>Next Claim:</strong> <span id="nextClaim">Calculating...</span></p>
                         <button class="btn btn-primary w-100" id="claimButton" disabled>Claim 8 $LKURD</button>
                     </div>
                 </section>
-                <section class="lkurd-details py-5 text-center">
-                    <h2 class="section-title">What is $LKURD?</h2>
-                    <p class="lead">A decentralized cryptocurrency on TON blockchain, designed for low fees, fast transactions, and financial empowerment.</p>
-                    <div class="row g-4 mt-4">
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card">
-                                <i class="bi bi-shield-lock"></i>
-                                <h3>Secure</h3>
-                                <p>Built on TON’s robust blockchain.</p>
-                            </div>
+                <section class="distribution py-5">
+                    <h2 class="section-title">Distribution of Earnings</h2>
+                    <div class="distribution-card mx-auto">
+                        <canvas id="distributionChart"></canvas>
+                        <p class="mt-3">30% to content creators, distributed every 5,000 Stars.</p>
+                    </div>
+                </section>
+                <section class="suggested py-5">
+                    <h2 class="section-title">Suggested for You</h2>
+                    <div class="suggested-slider">
+                        <div class="suggested-card">
+                            <h3>Explore $LKURD</h3>
+                            <p>Learn more about our cryptocurrency.</p>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card">
-                                <i class="bi bi-lightning"></i>
-                                <h3>Fast</h3>
-                                <p>Instant transactions worldwide.</p>
-                            </div>
+                        <div class="suggested-card">
+                            <h3>Join Casino</h3>
+                            <p>Win big with Lira Kurdi Casino!</p>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <div class="feature-card">
-                                <i class="bi bi-wallet2"></i>
-                                <h3>Low Fees</h3>
-                                <p>Nearly zero-cost transfers.</p>
-                            </div>
+                        <div class="suggested-card">
+                            <h3>Play Age of Web</h3>
+                            <p>Conquer the pixel world!</p>
                         </div>
                     </div>
                 </section>
-                <section class="slogans py-5">
-                    <h2 class="section-title">Invest in Your Future</h2>
+                <section class="apps py-5">
+                    <h2 class="section-title">Our Apps</h2>
                     <div class="row g-4">
-                        <div class="col-12 col-md-6">
-                            <div class="slogan-card">
-                                <h3>Şimdi Al, Bir Yıl Sonra Zengin Ol!</h3>
-                                <p>Join the $LKURD revolution today.</p>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="app-card">
+                                <div class="app-logo-placeholder">Hez</div>
+                                <h5 class="card-title">Hez Dating</h5>
+                                <p class="card-text">Find your match!</p>
+                                <button class="btn btn-primary">Coming Soon</button>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="slogan-card">
-                                <h3>Al-Sat, Coptrading, Katıl!</h3>
-                                <p>Trade smart, grow your wealth.</p>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="app-card">
+                                <div class="app-logo-placeholder">Kevok</div>
+                                <h5 class="card-title">Kevok</h5>
+                                <p class="card-text">Moto courier service.</p>
+                                <button class="btn btn-primary">Coming Soon</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="app-card">
+                                <div class="app-logo-placeholder">Copy</div>
+                                <h5 class="card-title">Copy Trading</h5>
+                                <p class="card-text">Follow top traders.</p>
+                                <button class="btn btn-primary">Coming Soon</button>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="app-card">
+                                <div class="app-logo-placeholder">Air</div>
+                                <h5 class="card-title">Airdrops</h5>
+                                <p class="card-text">Earn free tokens!</p>
+                                <button class="btn btn-primary">Coming Soon</button>
                             </div>
                         </div>
                     </div>
@@ -81,14 +115,14 @@
                     <div class="col-12 col-md-6">
                         <div class="investment-card">
                             <h3>Buy & Sell $LKURD</h3>
-                            <p>Trade $LKURD at 1 TL per token.</p>
+                            <p>Trade at 1 TL per token.</p>
                             <a href="https://t.me/LiraKurdiSupport" target="_blank" class="btn btn-primary">Trade Now</a>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="investment-card">
                             <h3>BTC Investment</h3>
-                            <p>Convert BTC to $LKURD for higher returns.</p>
+                            <p>Convert BTC to $LKURD.</p>
                             <a href="https://t.me/LiraKurdiSupport" target="_blank" class="btn btn-primary">Invest Now</a>
                         </div>
                     </div>
@@ -137,7 +171,7 @@
                             <img id="profilePhoto" src="" alt="Profile Photo" class="profile-photo d-none">
                             <p><strong>Name:</strong> <span id="fullName">Guest</span></p>
                             <p><strong>Username:</strong> <a href="#" id="telegramLink" target="_blank">@Guest</a></p>
-                            <p><strong>User ID:</strong> <span id="userId">N/A</span></p>
+                            <p><strong>User ID:</strong> <span id="userIdProfile">N/A</span></p>
                             <p><strong>Language:</strong> <span id="language">N/A</span></p>
                             <p><strong>Premium:</strong> <span id="premium">No</span></p>
                             <p><strong>Allows PM:</strong> <span id="allowsPm">N/A</span></p>
@@ -145,21 +179,14 @@
                         <button class="btn btn-primary w-100 mb-4" onclick="connectWallet()">Connect Telegram Wallet</button>
                         <div class="balance-list">
                             <div class="balance-item">
-                                <i class="bi bi-currency-bitcoin"></i>
+                                <img src="images/logo.png" alt="LKURD" class="currency-logo">
                                 <span>LKURD</span>
-                                <span id="lkurdBalance">100.00 LKURD - ₺100.00</span>
+                                <span id="lkurdBalanceProfile">100.00 LKURD - ₺100.00</span>
                             </div>
                             <div class="balance-item">
-                                <i class="bi bi-currency-bitcoin"></i>
-                                <span>BTC</span>
-                                <span id="btcBalance">0.002</span>
-                                <span id="btc">$<span>Loading...</span></span>
-                            </div>
-                            <div class="balance-item">
-                                <i class="bi bi-currency-bitcoin"></i>
-                                <span>ETH</span>
-                                <span id="ethBalance">0.05</span>
-                                <span id="eth">$<span>Loading...</span></span>
+                                <i class="bi bi-currency-dollar"></i>
+                                <span>USDT</span>
+                                <span id="usdtBalanceProfile">0.00 USDT - ₺<span>Loading...</span></span>
                             </div>
                         </div>
                         <div class="top-up-card mt-4">
@@ -199,8 +226,26 @@
                 </ul>
             </div>
         </nav>
+        <footer class="footer py-4 text-center">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">About</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Become a Content Creator</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Partner with Us</a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <a href="#" class="footer-link">Work with Us</a>
+                </div>
+            </div>
+            <p class="mt-3 text-muted">© 2025 Lira Kurdi. All rights reserved.</p>
+        </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="script.js"></script>
 </body>
