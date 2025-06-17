@@ -15,6 +15,11 @@ window.addEventListener('load', () => {
             document.getElementById('userId').textContent = initData.user.id || 'N/A';
             document.getElementById('language').textContent = initData.user.language_code || 'N/A';
             document.getElementById('premium').textContent = initData.user.is_premium ? 'Yes' : 'No';
+            document.getElementById('allowsPm').textContent = initData.user.allows_write_to_pm ? 'Yes' : 'No';
+            if (initData.user.photo_url) {
+                document.getElementById('profilePhoto').src = initData.user.photo_url;
+                document.getElementById('profilePhoto').classList.remove('d-none');
+            }
         }
         window.Telegram.WebApp.MainButton
             .setText('View Profile')
@@ -34,9 +39,16 @@ window.addEventListener('load', () => {
         })
         .catch(error => {
             console.error('CoinGecko API Error:', error);
-            document.querySelectorAll('.balance-item span:nth-child(4) span').forEach(el => el.innerText = 'N/A');
+            document.querySelectorAll('.balance-item span:nth-child(3) span').forEach(el => el.innerText = 'N/A');
         });
+
+    updateLkurdBalance(100); // Başlangıç bakiyesi
 });
+
+function updateLkurdBalance(amount) {
+    const formatted = amount.toFixed(2);
+    document.getElementById('lkurdBalance').textContent = `${formatted} LKURD - ₺${formatted}`;
+}
 
 function connectWallet() {
     window.open('https://t.me/wallet', '_blank');
@@ -49,8 +61,8 @@ function topUpBalance() {
         return;
     }
     alert(`Purchasing ${amount} $LKURD with Telegram Stars (1 $LKURD = 1 TL)...`);
-    const currentBalance = parseFloat(document.getElementById('lkurdBalance').textContent);
-    document.getElementById('lkurdBalance').textContent = (currentBalance + amount).toFixed(2);
+    const currentBalance = parseFloat(document.getElementById('lkurdBalance').textContent.split(' ')[0]);
+    updateLkurdBalance(currentBalance + amount);
     document.getElementById('topUpAmount').value = '';
 }
 
