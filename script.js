@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
             document.getElementById('telegramLink').href = `https://t.me/${initData.user.username || ''}`;
             document.getElementById('userIdProfile').textContent = initData.user.id || 'N/A';
             document.getElementById('language').textContent = initData.user.language_code || 'N/A';
-            document.getElementById('premium').textContent = initData.user.is_premium ? 'Yes' : 'No';
+            document.getElementById('premiumStatus').textContent = window.isPremiumUser ? 'Yes' : 'No';
             document.getElementById('allowsPm').textContent = initData.user.allows_write_to_pm ? 'Yes' : 'No';
             if (initData.user.photo_url) {
                 document.getElementById('profilePhoto').src = initData.user.photo_url;
@@ -30,6 +30,7 @@ window.addEventListener('load', () => {
             .onClick(() => showPage('profile'));
         window.Telegram.WebApp.BackButton.hide();
         loadTransactions();
+        checkPremiumStatus();
     }
 
     fetchPrices();
@@ -52,7 +53,7 @@ async function fetchPrices() {
 }
 
 function updateBalance(currency) {
-    const balance = 0.00; // Herkesin bakiyesi 0.00
+    const balance = 0.00;
     let displayText = '';
     let logoSrc = 'images/logo.png';
     let symbol = currency;
@@ -64,11 +65,11 @@ function updateBalance(currency) {
         case 'USDT':
             const tryValue = window.usdtryPrice ? (balance * window.usdtryPrice).toFixed(2) : 'N/A';
             displayText = `${balance.toFixed(2)} USDT - ₺${tryValue}`;
-            logoSrc = ''; // USDT için logo yok, ikon
+            logoSrc = '';
             break;
         case 'TRY':
             displayText = `${balance.toFixed(2)} TRY`;
-            logoSrc = ''; // TRY için logo yok
+            logoSrc = '';
             symbol = '₺';
             break;
     }
