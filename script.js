@@ -8,26 +8,7 @@ window.addEventListener('load', () => {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         window.Telegram.WebApp.setViewportData({ isExpanded: true });
-        const initData = window.Telegram.WebApp.initDataUnsafe;
-        if (initData.user) {
-            document.getElementById('userName').textContent = initData.user.username || 'Guest';
-            document.getElementById('userId').textContent = initData.user.id || 'N/A';
-            document.getElementById('fullName').textContent = `${initData.user.first_name || ''} ${initData.user.last_name || ''}`.trim() || 'Guest';
-            document.getElementById('telegramLink').textContent = `@${initData.user.username || 'Guest'}`;
-            document.getElementById('telegramLink').href = `https://t.me/${initData.user.username || ''}`;
-            document.getElementById('userIdProfile').textContent = initData.user.id || 'N/A';
-            document.getElementById('language').textContent = initData.user.language_code || 'N/A';
-            document.getElementById('premiumStatus').textContent = window.isPremiumUser ? 'Yes' : 'No';
-            document.getElementById('allowsPm').textContent = initData.user.allows_write_to_pm ? 'Yes' : 'No';
-            if (initData.user.photo_url) {
-                document.getElementById('profilePhoto').src = initData.user.photo_url;
-                document.getElementById('profilePhoto').classList.remove('d-none');
-            }
-        }
-        window.Telegram.WebApp.MainButton
-            .setText('View Profile')
-            .show()
-            .onClick(() => showPage('profile'));
+        window.Telegram.WebApp.MainButton.hide(); // View Profile kaldır
         window.Telegram.WebApp.BackButton.hide();
         loadTransactions();
         checkPremiumStatus();
@@ -86,11 +67,6 @@ function updateBalance(currency) {
     if (window.Telegram?.WebApp) {
         window.Telegram.WebApp.CloudStorage.setItem('selectedCurrency', currency);
     }
-}
-
-function connectWallet() {
-    window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
-    window.open('https://t.me/wallet', '_blank');
 }
 
 function topUpBalance() {
