@@ -1,0 +1,38 @@
+body {
+    background: url('../images/arkaplan.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    margin: 0;
+    background-color: #1c2526;
+}
+.header {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.9), rgba(30, 30, 30, 0.9));
+}
+.logo {
+    max-width: 150px;
+}
+.profile-card {
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.8), rgba(30, 30, 30, 0.8));
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+}
+.profile-card .card-body {
+    padding: 20px;
+}
+.card-title {
+    font-size: 1.2rem;
+}
+.card-text {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+.btn-primary {
+    background: linear-gradient(45deg, #8b0000, #d4af37);
+    border: none;
+}
+.btn-primary:hover {
+    background: linear-gradient(45deg, #d4af37, #ffcc00);
+}
