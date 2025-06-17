@@ -12,20 +12,53 @@
     <div id="intro" class="intro">
         <img src="../images/casinologo.png" alt="Casino Logo" class="intro-logo">
     </div>
+    <div id="login" class="d-none">
+        <div class="login-card mx-auto">
+            <h3 class="text-center">Enter Your ID</h3>
+            <div class="input-group mb-3">
+                <input type="text" id="userIdInput" class="form-control" placeholder="User ID">
+            </div>
+            <button class="btn btn-outline-primary w-100" onclick="login()">Login</button>
+        </div>
+    </div>
     <div id="main-content" class="d-none">
-        <header class="header py-4 text-center">
-            <img src="../images/casinologo.png" alt="Casino Logo" class="logo mb-3">
-            <h1 class="display-4">Lira Kurdi Casino</h1>
-            <p class="slogan">Spin, Win, Earn $LKURD!</p>
+        <header class="header py-3 text-center">
+            <img src="../images/casinologo.png" alt="Casino Logo" class="logo mb-2">
+            <h1 class="display-5">Lira Kurdi Casino</h1>
         </header>
-        <main class="container-fluid py-5 text-center">
-            <h2 class="section-title">Welcome to the Casino!</h2>
-            <p class="lead">Play exciting games and win $LKURD rewards. Coming soon!</p>
-            <a href="../index.html" class="btn btn-primary mt-3">Back to Home</a>
+        <main class="container-fluid py-3">
+            <div class="slot-card mx-auto">
+                <h3 class="text-center">Stars Slot</h3>
+                <p class="text-center">Balance: <span id="gameBalance">0</span> Stars</p>
+                <div class="slot-machine">
+                    <div class="slot-reel">
+                        <img src="../images/slot_cherry.png" alt="Cherry" class="slot-icon">
+                        <img src="../images/slot_lemon.png" alt="Lemon" class="slot-icon">
+                        <img src="../images/slot_seven.png" alt="Seven" class="slot-icon">
+                        <img src="../images/slot_bar.png" alt="Bar" class="slot-icon">
+                    </div>
+                    <div class="slot-reel">
+                        <img src="../images/slot_cherry.png" alt="Cherry" class="slot-icon">
+                        <img src="../images/slot_lemon.png" alt="Lemon" class="slot-icon">
+                        <img src="../images/slot_seven.png" alt="Seven" class="slot-icon">
+                        <img src="../images/slot_bar.png" alt="Bar" class="slot-icon">
+                    </div>
+                    <div class="slot-reel">
+                        <img src="../images/slot_cherry.png" alt="Cherry" class="slot-icon">
+                        <img src="../images/slot_lemon.png" alt="Lemon" class="slot-icon">
+                        <img src="../images/slot_seven.png" alt="Seven" class="slot-icon">
+                        <img src="../images/slot_bar.png" alt="Bar" class="slot-icon">
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary w-100 mt-3" onclick="spinSlot()">Spin (1 Star)</button>
+                <button class="btn btn-outline-primary w-100 mt-2" onclick="withdrawBalance()">Çekim Yap</button>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="exitGame()">Exit</button>
+            </div>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="../premium.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
