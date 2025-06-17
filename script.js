@@ -7,7 +7,7 @@ window.addEventListener('load', () => {
     if (window.Telegram?.WebApp) {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
-        window.Telegram.WebApp.setViewportData({ isExpanded: true }); // Tam ekran
+        window.Telegram.WebApp.setViewportData({ isExpanded: true });
         const initData = window.Telegram.WebApp.initDataUnsafe;
         if (initData.user) {
             document.getElementById('userName').textContent = initData.user.username || 'Guest';
@@ -29,40 +29,61 @@ window.addEventListener('load', () => {
             .show()
             .onClick(() => showPage('profile'));
         window.Telegram.WebApp.BackButton.hide();
-        initFarming();
         loadTransactions();
     }
 
-    initChart();
     fetchPrices();
-    updateLkurdBalance(100); // Başlangıç bakiyesi
+    updateBalance('LKURD');
+
+    document.getElementById('currencySelect').addEventListener('change', (e) => updateBalance(e.target.value));
+    document.getElementById('currencySelectProfile').addEventListener('change', (e) => updateBalance(e.target.value));
 });
 
 // Binance API
 async function fetchPrices() {
     try {
-        const symbols = ['USDTRY'];
-        const prices = {};
-        for (const symbol of symbols) {
-            const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
-            const data = await response.json();
-            prices[symbol] = parseFloat(data.price);
-        }
-        document.getElementById('usdtBalance').innerText = `0.00 USDT - ₺${(0 * prices.USDTRY).toFixed(2)}`;
-        document.getElementById('usdtBalanceProfile').innerText = `0.00 USDT - ₺${(0 * prices.USDTRY).toFixed(2)}`;
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=USDTRY');
+        const data = await response.json();
+        window.usdtryPrice = parseFloat(data.price);
     } catch (error) {
         console.error('Binance API Error:', error);
-        document.getElementById('usdtBalance').innerText = '0.00 USDT - ₺N/A';
-        document.getElementById('usdtBalanceProfile').innerText = '0.00 USDT - ₺N/A';
+        window.usdtryPrice = null;
     }
 }
 
-function updateLkurdBalance(amount) {
-    const formatted = amount.toFixed(2);
-    document.getElementById('lkurdBalance').textContent = `${formatted} LKURD - ₺${formatted}`;
-    document.getElementById('lkurdBalanceProfile').textContent = `${formatted} LKURD - ₺${formatted}`;
+function updateBalance(currency) {
+    const balance = 0.00; // Herkesin bakiyesi 0.00
+    let displayText = '';
+    let logoSrc = 'images/logo.png';
+    let symbol = currency;
+
+    switch (currency) {
+        case 'LKURD':
+            displayText = `${balance.toFixed(2)} LKURD - ₺${balance.toFixed(2)}`;
+            break;
+        case 'USDT':
+            const tryValue = window.usdtryPrice ? (balance * window.usdtryPrice).toFixed(2) : 'N/A';
+            displayText = `${balance.toFixed(2)} USDT - ₺${tryValue}`;
+            logoSrc = ''; // USDT için logo yok, ikon
+            break;
+        case 'TRY':
+            displayText = `${balance.toFixed(2)} TRY`;
+            logoSrc = ''; // TRY için logo yok
+            symbol = '₺';
+            break;
+    }
+
+    document.getElementById('balance').textContent = displayText;
+    document.getElementById('currencySymbol').textContent = symbol;
+    document.getElementById('currencyLogo').src = logoSrc || '';
+    document.getElementById('currencyLogo').style.display = logoSrc ? 'inline' : 'none';
+    document.getElementById('balanceProfile').textContent = displayText;
+    document.getElementById('currencySymbolProfile').textContent = symbol;
+    document.getElementById('currencyLogoProfile').src = logoSrc || '';
+    document.getElementById('currencyLogoProfile').style.display = logoSrc ? 'inline' : 'none';
+
     if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.CloudStorage.setItem('lkurdBalance', formatted);
+        window.Telegram.WebApp.CloudStorage.setItem('selectedCurrency', currency);
     }
 }
 
@@ -78,8 +99,6 @@ function topUpBalance() {
         window.Telegram.WebApp.showAlert('Please enter a valid amount.');
         return;
     }
-    const currentBalance = parseFloat(document.getElementById('lkurdBalance').textContent.split(' ')[0]);
-    updateLkurdBalance(currentBalance + amount);
     addTransaction(`Bought ${amount.toFixed(2)} $LKURD`);
     window.Telegram.WebApp.showPopup({
         title: 'Success!',
@@ -87,51 +106,6 @@ function topUpBalance() {
         buttons: [{ type: 'ok' }]
     });
     document.getElementById('topUpAmount').value = '';
-}
-
-function initFarming() {
-    const FARMING_INTERVAL = 15 * 60 * 60 * 1000; // 15 saat
-    const REWARD = 8;
-
-    window.Telegram.WebApp.CloudStorage.getItem('lastClaim', (err, lastClaim) => {
-        const now = Date.now();
-        const lastClaimTime = lastClaim ? parseInt(lastClaim) : 0;
-        const timeSinceLastClaim = now - lastClaimTime;
-        const claimButton = document.getElementById('claimButton');
-        const nextClaimSpan = document.getElementById('nextClaim');
-
-        function updateTimer() {
-            const timeLeft = FARMING_INTERVAL - (Date.now() - lastClaimTime);
-            if (timeLeft <= 0) {
-                claimButton.disabled = false;
-                nextClaimSpan.textContent = 'Now!';
-                claimButton.onclick = () => claimReward();
-            } else {
-                claimButton.disabled = true;
-                const hours = Math.floor(timeLeft / (60 * 60 * 1000));
-                const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
-                nextClaimSpan.textContent = `${hours}h ${minutes}m`;
-            }
-        }
-
-        function claimReward() {
-            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-            const currentBalance = parseFloat(document.getElementById('lkurdBalance').textContent.split(' ')[0]);
-            updateLkurdBalance(currentBalance + REWARD);
-            addTransaction(`Claimed ${REWARD} $LKURD from farming`);
-            window.Telegram.WebApp.CloudStorage.setItem('lastClaim', Date.now().toString());
-            lastClaimTime = Date.now();
-            window.Telegram.WebApp.showPopup({
-                title: 'Reward Claimed!',
-                message: `You earned ${REWARD} $LKURD!`,
-                buttons: [{ type: 'ok' }]
-            });
-            updateTimer();
-        }
-
-        updateTimer();
-        setInterval(updateTimer, 60000);
-    });
 }
 
 function addTransaction(description) {
@@ -163,31 +137,6 @@ function loadTransactions() {
             li.textContent = `${tx.description} - ${tx.date}`;
             transactionList.appendChild(li);
         });
-    });
-}
-
-function initChart() {
-    const ctx = document.getElementById('distributionChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Content Creators (30%)', 'Platform (40%)', 'Community (30%)'],
-            datasets: [{
-                data: [30, 40, 30],
-                backgroundColor: ['#ff0000', '#007aff', '#ffcc00']
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#000',
-                        font: { size: 12 }
-                    }
-                }
-            }
-        }
     });
 }
 
