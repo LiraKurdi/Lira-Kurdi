@@ -1,73 +1,28 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
 body {
-    background-color: #ffffff;
-    color: #333;
-    padding: 15px;
+    background-color: #f8f9fa;
 }
 
-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    background-color: #0088cc;
-    color: white;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.logo {
-    width: 30px; /* Logo daha küçük */
+.telegram-logo {
+    width: 24px; /* Küçük ve minimalist logo */
     height: auto;
-}
-
-h1 {
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-
-h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #0088cc;
+    vertical-align: middle;
 }
 
 #form-builder {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     margin: 0 auto;
-}
-
-input[type="text"],
-select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 1rem;
-    background-color: #f9f9f9;
-}
-
-select {
-    cursor: pointer;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .question {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 15px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #dee2e6;
     border-radius: 6px;
-    background-color: #fafafa;
+    background-color: #f8f9fa;
 }
 
 .option {
@@ -78,37 +33,4 @@ select {
 
 .option input {
     flex: 1;
-}
-
-.telegram-button {
-    background-color: #0088cc;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin: 10px 5px;
-    transition: background-color 0.2s;
-}
-
-.telegram-button:hover {
-    background-color: #006b9f;
-}
-
-/* Mobil uyumluluk */
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-    .logo {
-        width: 24px; /* Mobil için daha küçük logo */
-    }
-    h1 {
-        font-size: 1.2rem;
-    }
-    #form-builder {
-        padding: 15px;
-    }
 }
