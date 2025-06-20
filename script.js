@@ -1,41 +1,137 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Forms</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-</head>
-<body>
-    <header class="bg-primary text-white p-3 mb-4 text-center">
-        <img src="https://telegram.org/img/t_logo.png" alt="Telegram Logo" class="telegram-logo me-2">
-        <h1 class="d-inline-block">Forms</h1>
-    </header>
-    <main class="container">
-        <section id="form-builder">
-            <h2 class="mb-3">Create a New Form</h2>
-            <input type="text" id="form-title" class="form-control mb-3" placeholder="Enter form title" required>
-            <div id="questions-container"></div>
-            <div class="mb-3">
-                <select id="question-type" class="form-select">
-                    <option value="multiple-choice"><i class="bi bi-list-ul"></i> Multiple Choice</option>
-                    <option value="dropdown"><i class="bi bi-caret-down-fill"></i> Dropdown</option>
-                    <option value="paragraph"><i class="bi bi-textarea-t"></i> Paragraph</option>
-                    <option value="date"><i class="bi bi-calendar-date"></i> Date</option>
-                    <option value="short-answer"><i class="bi bi-text-indent-left"></i> Short Answer</option>
-                </select>
-            </div>
-            <div class="d-flex gap-2 mb-3">
-                <button id="add-question" class="btn btn-primary">Add Question</button>
-                <button id="remove-question" class="btn btn-outline-danger" disabled>Remove Question</button>
-            </div>
-            <button id="save-form" class="btn btn-primary w-100">Save & Share Form</button>
-        </section>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+// Telegram Web Apps SDK'sını başlat
+const tg = window.Telegram.WebApp;
+tg.ready();
+
+const questionsContainer = document.getElementById('questions-container');
+const addQuestionButton = document.getElementById('add-question');
+const removeQuestionButton = document.getElementById('remove-question');
+const saveFormButton = document.getElementById('save-form');
+const formTitleInput = document.getElementById('form-title');
+const questionTypeSelect = document.getElementById('question-type');
+
+let questionCount = 0;
+
+// Yeni soru ekleme fonksiyonu
+function addQuestion() {
+    questionCount++;
+    const questionType = questionTypeSelect.value;
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question';
+    questionDiv.dataset.index = questionCount;
+
+    let questionHtml = `<input type="text" class="form-control mb-2 question-title" placeholder="Question ${questionCount}" required>`;
+
+    switch (questionType) {
+        case 'multiple-choice':
+        case 'dropdown':
+            questionHtml += `
+                <div class="options">
+                    <div class="option">
+                        <input type="text" class="form-control option-input" placeholder="Option 1" required>
+                    </div>
+                    <div class="option">
+                        <input type="text" class="form-control option-input" placeholder="Option 2" required>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm add-option mt-2">Add Option</button>
+            `;
+            break;
+        case 'paragraph':
+            questionHtml += `<textarea class="form-control mt-2" rows="3" placeholder="Long text response"></textarea>`;
+            break;
+        case 'date':
+            questionHtml += `<input type="date" class="form-control mt-2">`;
+            break;
+        case 'short-answer':
+            questionHtml += `<input type="text" class="form-control mt-2" placeholder="Short answer">`;
+            break;
+    }
+
+    questionDiv.innerHTML = questionHtml;
+    questionsContainer.appendChild(questionDiv);
+
+    // Seçenek ekleme butonu
+    if (questionType === 'multiple-choice' || questionType === 'dropdown') {
+        questionDiv.querySelector('.add-option').addEventListener('click', () => {
+            const options = questionDiv.querySelector('.options');
+            const newOption = document.createElement('div');
+            newOption.className = 'option';
+            newOption.innerHTML = `<input type="text" class="form-control option-input" placeholder="Option ${options.children.length + 1}" required>`;
+            options.appendChild(newOption);
+        });
+    }
+
+    removeQuestionButton.disabled = false;
+}
+
+// Soru çıkarma fonksiyonu
+function removeQuestion() {
+    if (questionCount > 0) {
+        const questions = questionsContainer.getElementsByClassName('question');
+        if (questions.length > 0) {
+            questionsContainer.removeChild(questions[questions.length - 1]);
+            questionCount--;
+            if (questionCount === 0) {
+                removeQuestionButton.disabled = true;
+            }
+        }
+    }
+}
+
+// Formu kaydetme ve Telegram'da paylaşma
+function saveForm() {
+    const formTitle = formTitleInput.value;
+    if (!formTitle) {
+        tg.showAlert('Please enter a form title');
+        return;
+    }
+
+    const questions = [];
+    const questionDivs = questionsContainer.getElementsByClassName('question');
+    for (let questionDiv of questionDivs) {
+        const questionTitle = questionDiv.querySelector('.question-title')?.value || '';
+        const questionType = questionTypeSelect.value;
+        let options = [];
+        if (questionType === 'multiple-choice' || questionType === 'dropdown') {
+            options = Array.from(questionDiv.querySelectorAll('.option-input')).map(input => input.value);
+        }
+        if (questionTitle || (options.length > 0 && options.every(opt => opt))) {
+            questions.push({ questionTitle, questionType, options });
+        }
+    }
+
+    if (questions.length === 0) {
+        tg.showAlert('Please add at least one valid question');
+        return;
+    }
+
+    const formData = { title: formTitle, questions };
+    localStorage.setItem('telegramForm', JSON.stringify(formData));
+
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=Fill out my form: ${formTitle}`;
+    tg.showPopup({
+        title: 'Form Saved!',
+        message: 'Your form has been saved. Share it now?',
+        buttons: [
+            { id: 'share', type: 'default', text: 'Share' },
+            { id: 'cancel', type: 'cancel', text: 'Cancel' }
+        ]
+    }, (buttonId) => {
+        if (buttonId === 'share') {
+            window.open(shareUrl, '_blank');
+        }
+    });
+}
+
+// Olay dinleyicileri
+addQuestionButton.addEventListener('click', addQuestion);
+removeQuestionButton.addEventListener('click', removeQuestion);
+saveFormButton.addEventListener('click', saveForm);
+
+// Telegram tema parametreleri
+tg.expand();
+document.body.style.backgroundColor = tg.themeParams.bg_color || '#f8f9fa';
+document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.style.backgroundColor = tg.themeParams.button_color || '#0088cc';
+    btn.style.borderColor = tg.themeParams.button_color || '#0088cc';
+});
