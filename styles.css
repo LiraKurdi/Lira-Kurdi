@@ -6,31 +6,30 @@
 }
 
 body {
-    background-color: #f0f2f5;
+    background-color: #ffffff;
     color: #333;
-    padding: 20px;
+    padding: 15px;
 }
 
 header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 0;
+    gap: 8px;
+    padding: 10px;
     background-color: #0088cc;
     color: white;
-    text-align: center;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 20px;
 }
 
 .logo {
-    width: 40px; /* Logo küçük boyutlu */
+    width: 30px; /* Logo daha küçük */
     height: auto;
 }
 
 h1 {
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 h2 {
@@ -42,24 +41,33 @@ h2 {
 #form-builder {
     background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-input[type="text"] {
+input[type="text"],
+select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
     font-size: 1rem;
+    background-color: #f9f9f9;
+}
+
+select {
+    cursor: pointer;
 }
 
 .question {
     margin-bottom: 20px;
     padding: 15px;
     border: 1px solid #e0e0e0;
-    border-radius: 5px;
+    border-radius: 6px;
+    background-color: #fafafa;
 }
 
 .option {
@@ -76,8 +84,8 @@ input[type="text"] {
     background-color: #0088cc;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
     margin: 10px 5px;
@@ -92,11 +100,15 @@ input[type="text"] {
 @media (max-width: 600px) {
     header {
         flex-direction: column;
+        text-align: center;
     }
     .logo {
-        width: 30px;
+        width: 24px; /* Mobil için daha küçük logo */
     }
     h1 {
         font-size: 1.2rem;
+    }
+    #form-builder {
+        padding: 15px;
     }
 }
