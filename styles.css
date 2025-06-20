@@ -1,20 +1,35 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #e0e0f7;
+    padding-top: 56px; /* Navbar yüksekliği için */
 }
 
 .telegram-logo {
-    width: 24px; /* Küçük ve minimalist logo */
+    width: 24px;
     height: auto;
     vertical-align: middle;
 }
 
-#form-builder {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
+.navbar {
+    background-color: #673ab7;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: white !important;
+}
+
+.navbar .nav-link:hover {
+    background-color: #512da8;
+}
+
+.card {
+    border: none;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 8px 8px 0 0;
 }
 
 .question {
@@ -22,15 +37,35 @@ body {
     padding: 15px;
     border: 1px solid #dee2e6;
     border-radius: 6px;
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
-.option {
+.option, .grid-row {
     display: flex;
     gap: 10px;
     margin-top: 10px;
 }
 
-.option input {
+.option input, .grid-row input {
     flex: 1;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 2fr repeat(var(--columns, 2), 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.grid-header {
+    font-weight: bold;
+    text-align: center;
+}
+
+#my-forms .list-group-item {
+    cursor: pointer;
+}
+
+#my-forms .list-group-item:hover {
+    background-color: #f8f9fa;
 }
