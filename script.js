@@ -1,135 +1,94 @@
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.getElementById('intro').classList.add('d-none');
-        document.getElementById('main-content').classList.remove('d-none');
-    }, 2000);
+// Telegram Web Apps SDK'sını başlat
+const tg = window.Telegram.WebApp;
+tg.ready();
 
-    if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-        window.Telegram.WebApp.setViewportData({ isExpanded: true });
-        window.Telegram.WebApp.BackButton.hide();
-        loadTransactions();
-        checkPremiumStatus();
-    }
+// Form ve sorular için HTML elementleri
+const questionsContainer = document.getElementById('questions-container');
+const addQuestionButton = document.getElementById('add-question');
+const saveFormButton = document.getElementById('save-form');
+const formTitleInput = document.getElementById('form-title');
 
-    initFirebase();
-    drawChart();
-});
+let questionCount = 0;
 
-function initFirebase() {
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        databaseURL: "YOUR_DATABASE_URL",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const userId = document.getElementById('userIdProfile').textContent;
-    db.ref('users/' + userId).on('value', snapshot => {
-        const data = snapshot.val();
-        if (data) {
-            document.getElementById('starsBalance').textContent = data.stars || 0;
-            document.getElementById('tonBalance').textContent = data.ton || 0;
-            document.getElementById('lkurdBalance').textContent = data.lkurd || 0;
-        }
+// Yeni bir soru ekleme fonksiyonu
+function addQuestion() {
+    questionCount++;
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question';
+    questionDiv.innerHTML = `
+        <input type="text" placeholder="Enter question ${questionCount}" class="question-title" required>
+        <div class="options">
+            <div class="option">
+                <input type="text" placeholder="Option 1" class="option-input" required>
+            </div>
+            <div class="option">
+                <input type="text" placeholder="Option 2" class="option-input" required>
+            </div>
+        </div>
+        <button class="telegram-button add-option">Add Option</button>
+    `;
+    questionsContainer.appendChild(questionDiv);
+
+    // Yeni seçenek ekleme butonu
+    questionDiv.querySelector('.add-option').addEventListener('click', () => {
+        const options = questionDiv.querySelector('.options');
+        const newOption = document.createElement('div');
+        newOption.className = 'option';
+        newOption.innerHTML = `<input type="text" placeholder="Option ${options.children.length + 1}" class="option-input" required>`;
+        options.appendChild(newOption);
     });
 }
 
-function drawChart() {
-    const ctx = document.getElementById('balanceChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Stars', 'TON', '$LKURD'],
-            datasets: [{
-                data: [77, 0.072, 1000000],
-                backgroundColor: ['#F3BA2F', '#007aff', '#ff0000']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-}
-
-async function connectWallet() {
-    const connector = new TonConnectSDK.TonConnect({
-        manifestUrl: 'https://raw.githubusercontent.com/LiraKurdi/LiraKurdi-Finance/main/tonconnect-manifest.json'
-    });
-    const wallets = await connector.getWallets();
-    const tonkeeper = wallets.find(wallet => wallet.appName === 'tonkeeper');
-    if (!tonkeeper) {
-        window.Telegram.WebApp.showAlert('Tonkeeper not found!');
+// Formu kaydetme ve Telegram'da paylaşma
+function saveForm() {
+    const formTitle = formTitleInput.value;
+    if (!formTitle) {
+        alert('Please enter a form title');
         return;
     }
-    const link = connector.connect({
-        bridgeUrl: tonkeeper.bridgeUrl,
-        universalLink: tonkeeper.universalLink
-    });
-    const image = await QRCode.toDataURL(link);
-    window.Telegram.WebApp.showPopup({
-        title: 'Connect Wallet',
-        message: 'Scan the QR code with Tonkeeper.',
-        buttons: [{ type: 'ok' }]
-    });
-    document.getElementById('walletAddress').innerHTML = `<img src="${image}" alt="QR Code" style="width: 200px; margin: 10px auto; display: block;">`;
-    connector.onStatusChange(wallet => {
-        if (wallet) {
-            document.getElementById('walletAddress').textContent = wallet.account.address;
-            window.Telegram.WebApp.showAlert(`${wallet.device.appName} wallet connected!`);
+
+    const questions = [];
+    const questionDivs = questionsContainer.getElementsByClassName('question');
+    for (let questionDiv of questionDivs) {
+        const questionTitle = questionDiv.querySelector('.question-title').value;
+        const options = Array.from(questionDiv.querySelectorAll('.option-input')).map(input => input.value);
+        if (questionTitle && options.every(opt => opt)) {
+            questions.push({ questionTitle, options });
+        }
+    }
+
+    if (questions.length === 0) {
+        alert('Please add at least one valid question with options');
+        return;
+    }
+
+    // Form verilerini localStorage'a kaydet
+    const formData = { title: formTitle, questions };
+    localStorage.setItem('telegramForm', JSON.stringify(formData));
+
+    // Telegram'da paylaşma bağlantısı oluştur
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=Fill out my form: ${formTitle}`;
+    tg.showPopup({
+        title: 'Form Saved!',
+        message: 'Your form has been saved. Share it now?',
+        buttons: [
+            { id: 'share', type: 'default', text: 'Share' },
+            { id: 'cancel', type: 'cancel', text: 'Cancel' }
+        ]
+    }, (buttonId) => {
+        if (buttonId === 'share') {
+            window.open(shareUrl, '_blank');
         }
     });
 }
 
-function addTransaction(description) {
-    const db = firebase.database();
-    const userId = document.getElementById('userIdProfile').textContent;
-    db.ref('transactions/' + userId).push({
-        description,
-        date: new Date().toLocaleString()
-    });
-    window.Telegram.WebApp.CloudStorage.getItem('transactions', (err, data) => {
-        const transactions = data ? JSON.parse(data) : [];
-        const newTransaction = { description, date: new Date().toLocaleString() };
-        transactions.unshift(newTransaction);
-        if (transactions.length > 10) transactions.pop();
-        window.Telegram.WebApp.CloudStorage.setItem('transactions', JSON.stringify(transactions));
-        loadTransactions();
-    });
-}
+// Olay dinleyicileri
+addQuestionButton.addEventListener('click', addQuestion);
+saveFormButton.addEventListener('click', saveForm);
 
-function loadTransactions() {
-    const db = firebase.database();
-    const userId = document.getElementById('userIdProfile').textContent;
-    db.ref('transactions/' + userId).limitToLast(10).on('value', snapshot => {
-        const transactionList = document.getElementById('transactionList');
-        transactionList.innerHTML = '';
-        const transactions = snapshot.val();
-        if (!transactions) {
-            transactionList.innerHTML = '<li class="list-group-item">No transactions yet.</li>';
-            return;
-        }
-        Object.values(transactions).reverse().forEach(tx => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            li.textContent = `${tx.description} - ${tx.date}`;
-            transactionList.appendChild(li);
-        });
-    });
-}
-
-function showPage(pageId) {
-    window.Telegram.WebApp.HapticFeedback.selectionChanged();
-    document.querySelectorAll('.page').forEach(page => page.classList.add('d-none'));
-    document.getElementById(pageId).classList.remove('d-none');
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    document.querySelector(`a[onclick="showPage('${pageId}')"]`).classList.add('active');
-}
+// Telegram tema parametrelerini uygula
+tg.expand(); // Tam ekran modu
+document.body.style.backgroundColor = tg.themeParams.bg_color || '#f0f2f5';
+document.querySelectorAll('.telegram-button').forEach(btn => {
+    btn.style.backgroundColor = tg.themeParams.button_color || '#0088cc';
+});
