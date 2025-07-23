@@ -1,316 +1,233 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Telegram WebApp
+    // --- 1. UYGULAMA KURULUMU VE TELEGRAM ENTEGRASYONU ---
     const tg = window.Telegram.WebApp;
-    
-    // Expand the WebApp to full view
     tg.expand();
-    
-    // Set theme parameters
-    document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
-    document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#000000');
-    document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#707579');
-    document.documentElement.style.setProperty('--tg-theme-link-color', tg.themeParams.link_color || '#3390ec');
-    document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#3390ec');
-    document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
-    document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f4f4f5');
-    
-    // Get user data
-    const user = tg.initDataUnsafe.user;
-    if (user) {
-        document.getElementById('userName').textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-        document.getElementById('userPhone').textContent = user.username ? `@${user.username}` : 'Telegram Kullanıcısı';
-        
-        // Set user avatar
-        const userAvatar = document.getElementById('userAvatar');
-        if (user.photo_url) {
-            userAvatar.style.backgroundImage = `url(${user.photo_url})`;
-            userAvatar.style.backgroundSize = 'cover';
-        } else {
-            const initials = (user.first_name ? user.first_name.charAt(0) : '') + (user.last_name ? user.last_name.charAt(0) : '');
-            userAvatar.textContent = initials || 'TU';
-        }
-    }
-    
-    // DOM Elements
-    const menuBtn = document.getElementById('menuBtn');
-    const closeMenuBtn = document.getElementById('closeMenuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const overlay = document.createElement('div');
-    overlay.className = 'tg-overlay';
-    document.body.appendChild(overlay);
-    
-    // Navigation buttons
-    const navButtons = document.querySelectorAll('.tg-nav-btn');
-    const sections = document.querySelectorAll('.tg-section');
-    
-    // Modal elements
-    const sendModal = document.getElementById('sendModal');
-    const closeSendModal = document.getElementById('closeSendModal');
-    const sendBtn = document.getElementById('sendBtn');
-    const walletSendBtn = document.getElementById('walletSendBtn');
-    
-    const receiveModal = document.getElementById('receiveModal');
-    const closeReceiveModal = document.getElementById('closeReceiveModal');
-    const receiveBtn = document.getElementById('receiveBtn');
-    const walletReceiveBtn = document.getElementById('walletReceiveBtn');
-    
-    const copyAddressBtn = document.getElementById('copyAddressBtn');
-    
-    // Menu toggle
-    menuBtn.addEventListener('click', () => {
-        sideMenu.classList.add('show');
-        overlay.classList.add('show');
-    });
-    
-    closeMenuBtn.addEventListener('click', () => {
-        sideMenu.classList.remove('show');
-        overlay.classList.remove('show');
-    });
-    
-    overlay.addEventListener('click', () => {
-        sideMenu.classList.remove('show');
-        document.querySelectorAll('.tg-modal.show').forEach(modal => {
-            modal.classList.remove('show');
-        });
-        overlay.classList.remove('show');
-    });
-    
-    // Navigation
-    navButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const sectionId = button.getAttribute('data-section');
-            
-            // Update active button
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            
-            // Show corresponding section
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(`${sectionId}Section`).classList.add('active');
-        });
-    });
-    
-    // Menu items navigation
-    document.querySelectorAll('.tg-menu-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const sectionId = item.getAttribute('data-section');
-            
-            // Close menu
-            sideMenu.classList.remove('show');
-            overlay.classList.remove('show');
-            
-            // Update active button
-            navButtons.forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.tg-nav-btn[data-section="${sectionId}"]`).classList.add('active');
-            
-            // Show corresponding section
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(`${sectionId}Section`).classList.add('active');
-        });
-    });
-    
-    // Send money modal
-    sendBtn.addEventListener('click', () => {
-        sendModal.classList.add('show');
-        overlay.classList.add('show');
-    });
-    
-    walletSendBtn.addEventListener('click', () => {
-        sendModal.classList.add('show');
-        overlay.classList.add('show');
-    });
-    
-    closeSendModal.addEventListener('click', () => {
-        sendModal.classList.remove('show');
-        overlay.classList.remove('show');
-    });
-    
-    // Receive money modal
-    receiveBtn.addEventListener('click', () => {
-        receiveModal.classList.add('show');
-        overlay.classList.add('show');
-    });
-    
-    walletReceiveBtn.addEventListener('click', () => {
-        receiveModal.classList.add('show');
-        overlay.classList.add('show');
-    });
-    
-    closeReceiveModal.addEventListener('click', () => {
-        receiveModal.classList.remove('show');
-        overlay.classList.remove('show');
-    });
-    
-    // Copy wallet address
-    copyAddressBtn.addEventListener('click', () => {
-        const address = document.getElementById('walletAddress').textContent;
-        navigator.clipboard.writeText(address).then(() => {
-            tg.showAlert('Cüzdan adresi kopyalandı!');
-        });
-    });
-    
-    // Logout button
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        tg.showConfirm('Çıkış yapmak istediğinize emin misiniz?', (confirmed) => {
-            if (confirmed) {
-                tg.close();
-            }
-        });
-    });
-    
-    // Confirm send button
-    document.getElementById('confirmSendBtn').addEventListener('click', () => {
-        const recipient = document.getElementById('recipientInput').value;
-        const amount = document.getElementById('sendAmount').value;
-        const note = document.getElementById('sendNote').value;
-        
-        if (!recipient || !amount) {
-            tg.showAlert('Lütfen alıcı ve miktar bilgilerini giriniz.');
+
+    // Tema ayarlarını uygula
+    const isDarkMode = tg.colorScheme === 'dark';
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+
+    // --- 2. UYGULAMA DURUMU (STATE) ---
+    // Gerçek bir uygulamada bu veriler API'den gelir.
+    const appState = {
+        user: {
+            balance: 0,
+            assets: [],
+            transactions: []
+        },
+        market: {
+            price: 0,
+            change24h: 0
+        },
+        walletAddress: 'UQB2hUHdOFJHUwZRYsKRBO4kJeufMHbmaBC1WOPIkxRPIOcC'
+    };
+
+    // --- 3. DOM ELEMENTLERİNİ SEÇME ---
+    const elements = {
+        pageTitle: document.getElementById('pageTitle'),
+        sections: document.querySelectorAll('.app-section'),
+        navButtons: document.querySelectorAll('.nav-btn'),
+        // Dashboard
+        totalBalanceAmount: document.getElementById('totalBalanceAmount'),
+        totalBalanceEquivalent: document.getElementById('totalBalanceEquivalent'),
+        transactionsContainer: document.getElementById('transactionsContainer'),
+        // Cüzdan
+        assetsContainer: document.getElementById('assetsContainer'),
+        // Piyasa
+        marketPrice: document.getElementById('marketPrice'),
+        marketChange: document.getElementById('marketChange'),
+        // Modallar
+        modals: document.querySelectorAll('.modal'),
+        // Yan Menü
+        sideMenu: document.getElementById('sideMenu'),
+        overlay: document.querySelector('.overlay'),
+        // Kullanıcı Bilgileri
+        userName: document.getElementById('userName'),
+        userHandle: document.getElementById('userHandle'),
+        userAvatar: document.getElementById('userAvatar'),
+        // QR Kod
+        qrCodeWrapper: document.getElementById('qrCodeWrapper'),
+        walletAddressSpan: document.getElementById('walletAddress'),
+    };
+
+    // --- 4. RENDER FONKSİYONLARI (ARAYÜZÜ GÜNCELLEME) ---
+
+    const renderDashboard = () => {
+        const { balance } = appState.user;
+        const { price } = appState.market;
+        elements.totalBalanceAmount.textContent = `${balance.toFixed(2)} LKURD`;
+        elements.totalBalanceEquivalent.textContent = `≈ ${(balance * price).toLocaleString('tr-TR', { style: 'currency', currency: 'USD' })}`;
+    };
+
+    const renderTransactions = () => {
+        const { transactions } = appState.user;
+        elements.transactionsContainer.innerHTML = ''; // Temizle
+        if (transactions.length === 0) {
+            elements.transactionsContainer.innerHTML = '<p class="hint-text">Henüz işlem yok.</p>';
             return;
         }
-        
-        // Here you would typically send the transaction
-        // For demo purposes, we'll just show a success message
-        tg.showAlert(`Başarılı! ${amount} LKURD gönderildi.`);
-        
-        // Close modal and reset form
-        sendModal.classList.remove('show');
-        overlay.classList.remove('show');
-        document.getElementById('recipientInput').value = '';
-        document.getElementById('sendAmount').value = '';
-        document.getElementById('sendNote').value = '';
-    });
-    
-    // Simulate loading user balance
-    setTimeout(() => {
-        document.getElementById('userBalance').innerHTML = `
-            <span>1,245.50 LKURD</span>
-            <small>≈ $124.55</small>
-        `;
-        
-        document.getElementById('walletBalance').textContent = '1,245.50 LKURD';
-        document.getElementById('walletBalance').nextElementSibling.textContent = '≈ $124.55';
-        
-        // Simulate transactions
-        const transactions = [
-            { type: 'receive', amount: '50.00', from: 'Ahmet Y.', date: '10 dk önce' },
-            { type: 'send', amount: '25.50', to: 'Market', date: 'Dün' },
-            { type: 'receive', amount: '1200.00', from: 'STON.fi', date: '2 gün önce' }
-        ];
-        
-        const transactionsList = document.getElementById('transactionsList');
-        transactionsList.innerHTML = '<h3>Son İşlemler</h3>';
-        
         transactions.forEach(tx => {
-            const txElement = document.createElement('div');
-            txElement.className = 'tg-transaction';
-            txElement.innerHTML = `
-                <div class="tg-tx-icon">
-                    <i class="fas fa-${tx.type === 'receive' ? 'arrow-down' : 'arrow-up'}"></i>
+            const isSent = tx.type === 'send';
+            const item = document.createElement('div');
+            item.className = 'transaction-item';
+            item.innerHTML = `
+                <div class="tx-icon ${isSent ? 'sent' : 'received'}">
+                    <i class="fas fa-arrow-${isSent ? 'up' : 'down'}"></i>
                 </div>
-                <div class="tg-tx-details">
-                    <h4>${tx.type === 'receive' ? tx.from : tx.to}</h4>
+                <div class="tx-details">
+                    <h4>${tx.party}</h4>
                     <p>${tx.date}</p>
                 </div>
-                <div class="tg-tx-amount ${tx.type}">
-                    ${tx.type === 'receive' ? '+' : '-'}${tx.amount} LKURD
+                <div class="tx-amount ${isSent ? 'sent' : 'received'}">
+                    ${isSent ? '-' : '+'}${tx.amount.toFixed(2)} LKURD
                 </div>
             `;
-            transactionsList.appendChild(txElement);
+            elements.transactionsContainer.appendChild(item);
         });
-        
-        // Simulate market data
-        document.getElementById('marketPrice').textContent = '$0.10';
-        document.getElementById('marketChange').textContent = '+5.25%';
-    }, 1000);
-    
-    // Add some CSS for transactions
-    const style = document.createElement('style');
-    style.textContent = `
-        .tg-transaction {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-        
-        .tg-transaction:last-child {
-            border-bottom: none;
-        }
-        
-        .tg-tx-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: rgba(16, 185, 129, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-        }
-        
-        .tg-tx-icon i {
-            color: #10b981;
-        }
-        
-        .tg-tx-details {
-            flex: 1;
-        }
-        
-        .tg-tx-details h4 {
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-        
-        .tg-tx-details p {
-            font-size: 12px;
-            color: var(--tg-theme-hint-color);
-        }
-        
-        .tg-tx-amount {
-            font-weight: 600;
-        }
-        
-        .tg-tx-amount.receive {
-            color: #10b981;
-        }
-        
-        .tg-tx-amount.send {
-            color: var(--tg-theme-text-color);
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Back button handling
-    tg.BackButton.onClick(() => {
-        if (sideMenu.classList.contains('show')) {
-            sideMenu.classList.remove('show');
-            overlay.classList.remove('show');
-        } else if (document.querySelector('.tg-modal.show')) {
-            document.querySelector('.tg-modal.show').classList.remove('show');
-            overlay.classList.remove('show');
-        } else {
-            tg.close();
-        }
-    });
-    
-    // Show back button when needed
-    const showBackButton = () => {
-        if (sideMenu.classList.contains('show') || document.querySelector('.tg-modal.show')) {
-            tg.BackButton.show();
-        } else {
-            tg.BackButton.hide();
-        }
     };
     
-    // Observe changes to show/hide back button
-    const observer = new MutationObserver(showBackButton);
-    observer.observe(sideMenu, { attributes: true });
-    document.querySelectorAll('.tg-modal').forEach(modal => {
-        observer.observe(modal, { attributes: true });
-    });
+    const renderMarket = () => {
+        const { price, change24h } = appState.market;
+        elements.marketPrice.textContent = price.toLocaleString('tr-TR', { style: 'currency', currency: 'USD' });
+        elements.marketChange.textContent = `${change24h.toFixed(2)}%`;
+        elements.marketChange.className = change24h >= 0 ? 'positive' : 'negative';
+    };
+
+    // --- 5. VERİ YÜKLEME VE İLK KURULUM ---
+
+    const loadInitialData = () => {
+        // Simüle edilmiş API çağrısı
+        setTimeout(() => {
+            // State'i güncelle
+            appState.user = {
+                balance: 1245.50,
+                transactions: [
+                    { type: 'receive', amount: 50.00, party: 'Ahmet Y.', date: '10 dk önce' },
+                    { type: 'send', amount: 25.50, party: 'Market', date: 'Dün' },
+                    { type: 'receive', amount: 1200.00, party: 'STON.fi', date: '2 gün önce' }
+                ]
+            };
+            appState.market = { price: 0.1234, change24h: 5.25 };
+            
+            // Arayüzü güncelle
+            renderDashboard();
+            renderTransactions();
+            renderMarket();
+        }, 1500); // 1.5 saniye bekleme
+    };
     
-    // Initialize with hidden back button
-    tg.BackButton.hide();
+    const setupUserInfo = () => {
+        const user = tg.initDataUnsafe.user;
+        if (!user) return;
+        
+        elements.userName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+        elements.userHandle.textContent = user.username ? `@${user.username}` : 'ID: ' + user.id;
+        
+        if (user.photo_url) {
+            elements.userAvatar.style.backgroundImage = `url(${user.photo_url})`;
+        } else {
+            const initials = (user.first_name ? user.first_name.charAt(0) : '') + (user.last_name ? user.last_name.charAt(0) : '');
+            elements.userAvatar.textContent = initials || 'L';
+        }
+    };
+
+    // --- 6. OLAY DİNLEYİCİLERİ (EVENT LISTENERS) ---
+
+    const setupEventListeners = () => {
+        // Navigasyon
+        elements.navButtons.forEach(btn => {
+            btn.addEventListener('click', () => navigateTo(btn.dataset.section));
+        });
+
+        // Yan Menü
+        document.getElementById('menuToggleBtn').addEventListener('click', () => toggleMenu(true));
+        document.getElementById('closeMenuBtn').addEventListener('click', () => toggleMenu(false));
+        elements.overlay.addEventListener('click', () => {
+            toggleMenu(false);
+            closeAllModals();
+        });
+        
+        // Modallar
+        document.querySelectorAll('[data-modal]').forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn.dataset.modal));
+        });
+        document.querySelectorAll('.modal-close-btn').forEach(btn => {
+            btn.addEventListener('click', closeAllModals);
+        });
+
+        // Dış Linkler
+        document.querySelectorAll('[data-link]').forEach(el => {
+            el.addEventListener('click', () => tg.openLink(el.dataset.link));
+        });
+        document.querySelectorAll('[data-tg-link]').forEach(el => {
+            el.addEventListener('click', () => tg.openTelegramLink(el.dataset.tgLink));
+        });
+        
+        // Adres Kopyalama ve Paylaşma
+        document.getElementById('copyAddressBtn').addEventListener('click', copyWalletAddress);
+        document.getElementById('shareAddressBtn').addEventListener('click', shareWalletAddress);
+        
+        // Kapatma butonu
+        document.getElementById('logoutBtn').addEventListener('click', () => tg.close());
+    };
+
+    // --- 7. YARDIMCI FONKSİYONLAR ---
+
+    const navigateTo = (sectionId) => {
+        elements.sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+
+        elements.navButtons.forEach(b => b.classList.remove('active'));
+        document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+        
+        elements.pageTitle.textContent = document.querySelector(`.nav-btn[data-section="${sectionId}"] span`).textContent;
+    };
+
+    const toggleMenu = (show) => {
+        elements.sideMenu.classList.toggle('show', show);
+        elements.overlay.classList.toggle('show', show);
+    };
+
+    const openModal = (modalId) => {
+        closeAllModals();
+        document.getElementById(modalId)?.classList.add('show');
+        elements.overlay.classList.add('show');
+        if (modalId === 'receiveModal') {
+            generateQRCode();
+            elements.walletAddressSpan.textContent = appState.walletAddress;
+        }
+    };
+
+    const closeAllModals = () => {
+        elements.modals.forEach(m => m.classList.remove('show'));
+        elements.overlay.classList.remove('show');
+    };
+    
+    const generateQRCode = () => {
+        elements.qrCodeWrapper.innerHTML = ''; // Temizle
+        const qrImg = document.createElement('img');
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ton://transfer/${appState.walletAddress}`;
+        elements.qrCodeWrapper.appendChild(qrImg);
+    };
+    
+    const copyWalletAddress = () => {
+        tg.writeText(appState.walletAddress, () => {
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showAlert('Cüzdan adresi panoya kopyalandı!');
+        });
+    };
+    
+    const shareWalletAddress = () => {
+        const url = `https://t.me/share/url?url=${encodeURIComponent(appState.walletAddress)}&text=${encodeURIComponent('Lira Kurdi cüzdan adresim:')}`;
+        tg.openTelegramLink(url);
+    };
+
+    // --- UYGULAMAYI BAŞLAT ---
+    const init = () => {
+        setupUserInfo();
+        setupEventListeners();
+        loadInitialData();
+    };
+
+    init();
 });
