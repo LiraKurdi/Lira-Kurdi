@@ -3,190 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no">
-    <title>Lira Kurdi Cüzdanı</title>
+    <title>Lira Kurdi Merkezi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="app-wrapper">
-        <!-- Ana İçerik Alanı -->
-        <main class="main-content">
-            <!-- Dinamik olarak yüklenecek bölüm başlığı -->
-            <header class="page-header">
-                <button class="menu-toggle-btn" id="menuToggleBtn"><i class="fas fa-bars"></i></button>
-                <h1 id="pageTitle">Gösterge Paneli</h1>
-                <div class="header-logo">
-                    <img src="assets/images/logo.png" alt="LKURD Logo">
-                </div>
-            </header>
-
-            <!-- Bölümlerin yükleneceği ana konteyner -->
-            <div class="sections-container">
-                <!-- Gösterge Paneli (Dashboard) Bölümü -->
-                <section class="app-section active" id="dashboardSection">
-                    <div class="balance-card">
-                        <div class="balance-info">
-                            <p class="balance-label">Toplam Varlık</p>
-                            <h2 class="balance-amount" id="totalBalanceAmount"><div class="skeleton skeleton-text-lg"></div></h2>
-                            <p class="balance-equivalent" id="totalBalanceEquivalent"><div class="skeleton skeleton-text"></div></p>
-                        </div>
-                        <div class="balance-actions">
-                            <button class="action-btn" data-modal="sendModal"><i class="fas fa-arrow-up"></i><span>Gönder</span></button>
-                            <button class="action-btn" data-modal="receiveModal"><i class="fas fa-arrow-down"></i><span>Al</span></button>
-                            <button class="action-btn" data-link="https://ston.fi/swap?chartVisible=false&ft=TON&tt=LKURD"><i class="fas fa-shopping-cart"></i><span>Satın Al</span></button>
-                        </div>
-                    </div>
-                    <div class="transactions-list" id="transactionsList">
-                        <h3>Son İşlemler</h3>
-                        <div class="list-container" id="transactionsContainer">
-                            <!-- Skeleton Loader -->
-                            <div class="transaction-item skeleton-item">
-                                <div class="skeleton skeleton-avatar"></div>
-                                <div class="skeleton-item-content">
-                                    <div class="skeleton skeleton-text"></div>
-                                    <div class="skeleton skeleton-text skeleton-sm"></div>
-                                </div>
-                            </div>
-                            <div class="transaction-item skeleton-item">
-                                <div class="skeleton skeleton-avatar"></div>
-                                <div class="skeleton-item-content">
-                                    <div class="skeleton skeleton-text"></div>
-                                    <div class="skeleton skeleton-text skeleton-sm"></div>
-                                </div>
-                            </div>
-                             <div class="transaction-item skeleton-item">
-                                <div class="skeleton skeleton-avatar"></div>
-                                <div class="skeleton-item-content">
-                                    <div class="skeleton skeleton-text"></div>
-                                    <div class="skeleton skeleton-text skeleton-sm"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Cüzdan Bölümü -->
-                <section class="app-section" id="walletSection">
-                    <div class="assets-list" id="assetsContainer">
-                        <!-- Skeleton Loader -->
-                        <div class="asset-item skeleton-item">
-                            <div class="skeleton skeleton-avatar"></div>
-                            <div class="skeleton-item-content">
-                                <div class="skeleton skeleton-text"></div>
-                                <div class="skeleton skeleton-text skeleton-sm"></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Piyasa Bölümü -->
-                <section class="app-section" id="marketSection">
-                    <div class="market-overview-card">
-                        <div class="market-price">
-                            <p>LKURD Fiyatı</p>
-                            <h2 id="marketPrice"><div class="skeleton skeleton-text-lg"></div></h2>
-                        </div>
-                        <div class="market-change">
-                            <p>24s Değişim</p>
-                            <h3 id="marketChange"><div class="skeleton skeleton-text"></div></h3>
-                        </div>
-                    </div>
-                    <div class="market-trade-card">
-                        <div class="trade-input-group">
-                             <input type="number" placeholder="0.00">
-                             <span class="currency-label">LKURD</span>
-                        </div>
-                         <div class="trade-icon"><i class="fas fa-exchange-alt"></i></div>
-                        <div class="trade-input-group">
-                             <input type="number" placeholder="0.00" readonly>
-                             <span class="currency-label">TON</span>
-                        </div>
-                        <button class="primary-btn full-width">Takas Et</button>
-                    </div>
-                </section>
-
-                <!-- NFT Bölümü -->
-                <section class="app-section" id="nftSection">
-                    <div class="nft-card">
-                        <img src="https://s.getgems.io/nft/s/67ea/67eaf5d96700e7d6b0d44267/nft/1356976.png" alt="Lira Kurdi Resmi Sembol NFT">
-                        <h3>Lira Kurdi Sembolü</h3>
-                        <p>Bu NFT, Lira Kurdi'nin dijital dünyadaki kültürel mirasını ve topluluk ruhunu temsil eder.</p>
-                        <button class="primary-btn" data-link="https://getgems.io/nft/EQAPl7rChkXBsV7jqlgOiSb066qvB1YCLBlpbtLw22VV53eB">GetGems'te Görüntüle</button>
-                    </div>
-                </section>
+    <div class="app-container">
+        <!-- Üst Bar -->
+        <header class="app-header">
+            <div class="logo-title">
+                <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo">
+                <h1>Lira Kurdi</h1>
             </div>
-        </main>
+            <button class="connect-wallet-btn" id="connectWalletBtn">Cüzdan Bağla</button>
+        </header>
 
-        <!-- Alt Navigasyon Menüsü -->
-        <nav class="bottom-nav">
-            <button class="nav-btn active" data-section="dashboardSection">
-                <i class="fas fa-home"></i><span>Panel</span>
-            </button>
-            <button class="nav-btn" data-section="walletSection">
-                <i class="fas fa-wallet"></i><span>Cüzdan</span>
-            </button>
-            <button class="nav-btn" data-section="marketSection">
-                <i class="fas fa-chart-line"></i><span>Piyasa</span>
-            </button>
-            <button class="nav-btn" data-section="nftSection">
-                <i class="fas fa-image"></i><span>NFT</span>
-            </button>
+        <!-- Ana Veri Paneli -->
+        <section class="hero-stats">
+            <div class="stat-item">
+                <span class="label">Fiyat (USD)</span>
+                <span class="value" id="price"><div class="skeleton"></div></span>
+            </div>
+            <div class="stat-item">
+                <span class="label">Piyasa Değeri</span>
+                <span class="value" id="marketCap"><div class="skeleton"></div></span>
+            </div>
+            <div class="stat-item">
+                <span class="label">24s Değişim</span>
+                <span class="value" id="priceChange"><div class="skeleton"></div></span>
+            </div>
+        </section>
+
+        <!-- Sekme Navigasyonu -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="info">Genel Bakış</button>
+            <button class="tab-btn" data-tab="services">Servisler</button>
+            <button class="tab-btn" data-tab="community">Topluluk</button>
         </nav>
 
-        <!-- Yan Menü (Off-canvas) -->
-        <aside class="offcanvas-menu" id="sideMenu">
-            <div class="offcanvas-header">
-                <div class="user-profile">
-                    <div class="user-avatar" id="userAvatar"></div>
-                    <div class="user-info">
-                        <h4 id="userName">Telegram Kullanıcısı</h4>
-                        <p id="userHandle">@kullaniciadi</p>
+        <!-- Sekme İçerikleri -->
+        <main class="tab-content">
+            <!-- Genel Bakış Sekmesi -->
+            <div class="tab-pane active" id="info">
+                <div class="content-card">
+                    <h3>Proje Hakkında</h3>
+                    <p id="jettonDescription"><span class="skeleton-text"></span><span class="skeleton-text"></span></p>
+                </div>
+                <div class="content-card">
+                    <h3>Jeton Detayları</h3>
+                    <ul class="details-list">
+                        <li><span>Sahipler</span><strong id="holderCount"><span class="skeleton"></span></strong></li>
+                        <li><span>Toplam Arz</span><strong id="totalSupply"><span class="skeleton"></span></strong></li>
+                        <li>
+                            <span>Kontrat</span>
+                            <a href="#" id="contractAddress" class="address-link" target="_blank">
+                                <span class="skeleton"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Servisler Sekmesi -->
+            <div class="tab-pane" id="services">
+                <div class="grid">
+                    <div class="card" data-tg-link="https://t.me/LKURDMovieBot">
+                        <i class="fas fa-film icon movie"></i>
+                        <span>LKURD Movie</span>
+                    </div>
+                    <div class="card" data-tg-link="https://t.me/aaGameTONBot">
+                        <i class="fas fa-gamepad icon game"></i>
+                        <span>TON Games</span>
+                    </div>
+                    <div class="card" data-tg-link="https://t.me/tribute/app?startapp=suJQ">
+                        <i class="fas fa-star icon tribute"></i>
+                        <span>Abonelik</span>
+                    </div>
+                    <div class="card" data-tg-link="https://t.me/tribute/app?startapp=dqji">
+                        <i class="fas fa-hand-holding-heart icon donate"></i>
+                        <span>Bağış Yap</span>
+                    </div>
+                     <div class="card" data-tg-link="https://t.me/tribute/app?startapp=pgXq">
+                        <i class="fas fa-book-open icon ebook"></i>
+                        <span>E-Kitap</span>
                     </div>
                 </div>
-                <button class="close-menu-btn" id="closeMenuBtn"><i class="fas fa-times"></i></button>
             </div>
-            <div class="offcanvas-body">
-                <a class="menu-item" data-tg-link="https://t.me/tribute/app?startapp=suJQ"><i class="fas fa-star"></i><span>Tribute Abonelik</span></a>
-                <a class="menu-item" data-tg-link="https://t.me/tribute/app?startapp=dqji"><i class="fas fa-hand-holding-heart"></i><span>Projeye Bağış Yap</span></a>
-                <a class="menu-item" data-tg-link="https://t.me/tribute/app?startapp=pgXq"><i class="fas fa-book-open"></i><span>Dr. Rıza Nur E-Kitap</span></a>
-                <hr>
-                <a class="menu-item" data-link="https://github.com/LiraKurdi/Lira-Kurdi"><i class="fab fa-github"></i><span>GitHub</span></a>
-                <a class="menu-item" data-tg-link="https://t.me/LiraKurdiChat"><i class="fas fa-comments"></i><span>Topluluk Sohbeti</span></a>
-            </div>
-            <div class="offcanvas-footer">
-                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Uygulamayı Kapat</span></button>
-            </div>
-        </aside>
 
-        <!-- Modallar -->
-        <div class="modal" id="sendModal">
-             <div class="modal-content">
-                <div class="modal-header"><h3>LKURD Gönder</h3><button class="modal-close-btn"><i class="fas fa-times"></i></button></div>
-                <div class="modal-body">
-                    <input type="text" placeholder="Alıcı Adresi veya @kullaniciadi">
-                    <input type="number" placeholder="Miktar (LKURD)">
-                    <input type="text" placeholder="Not (Opsiyonel)">
-                </div>
-                <div class="modal-footer"><button class="primary-btn full-width">Gönderimi Onayla</button></div>
-            </div>
-        </div>
-        <div class="modal" id="receiveModal">
-            <div class="modal-content">
-                <div class="modal-header"><h3>LKURD Al</h3><button class="modal-close-btn"><i class="fas fa-times"></i></button></div>
-                <div class="modal-body text-center">
-                    <div class="qr-code-wrapper" id="qrCodeWrapper"></div>
-                    <div class="wallet-address-wrapper">
-                        <span id="walletAddress"></span>
-                        <button id="copyAddressBtn"><i class="fas fa-copy"></i></button>
+            <!-- Topluluk Sekmesi -->
+            <div class="tab-pane" id="community">
+                <div class="grid">
+                    <div class="card" data-tg-link="https://t.me/LiraKurdiChat">
+                        <i class="fab fa-telegram-plane icon telegram"></i>
+                        <span>Sohbet Grubu</span>
+                    </div>
+                    <div class="card" data-link="https://x.com/LiraKurdi">
+                        <i class="fab fa-twitter icon twitter"></i>
+                        <span>X (Twitter)</span>
+                    </div>
+                    <div class="card" data-link="https://www.instagram.com/lirakurdi/">
+                        <i class="fab fa-instagram icon instagram"></i>
+                        <span>Instagram</span>
+                    </div>
+                    <div class="card" data-link="https://www.youtube.com/@LiraKurdi">
+                        <i class="fab fa-youtube icon youtube"></i>
+                        <span>YouTube</span>
+                    </div>
+                    <div class="card" data-link="https://www.facebook.com/LiraKurdiOfficial">
+                        <i class="fab fa-facebook icon facebook"></i>
+                        <span>Facebook</span>
+                    </div>
+                    <div class="card" data-link="https://www.tiktok.com/@lira.kurdi">
+                        <i class="fab fa-tiktok icon tiktok"></i>
+                        <span>TikTok</span>
+                    </div>
+                    <div class="card" data-link="https://github.com/LiraKurdi/Lira-Kurdi">
+                        <i class="fab fa-github icon github"></i>
+                        <span>GitHub</span>
+                    </div>
+                    <div class="card" data-link="mailto:kurdishlira@gmail.com">
+                        <i class="fas fa-envelope icon email"></i>
+                        <span>E-Posta</span>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="primary-btn full-width" id="shareAddressBtn">Adresi Paylaş</button></div>
             </div>
-        </div>
-
-        <!-- Overlay -->
-        <div class="overlay"></div>
+        </main>
+        
+        <!-- Toast Bildirimi -->
+        <div class="toast" id="toastNotification"></div>
     </div>
     <script src="assets/js/main.js"></script>
 </body>
