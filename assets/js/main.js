@@ -1,232 +1,117 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. UYGULAMA KURULUMU VE TELEGRAM ENTEGRASYONU ---
+    // 1. UYGULAMA KURULUMU
     const tg = window.Telegram.WebApp;
     tg.expand();
+    tg.ready();
 
-    // Tema ayarlarını uygula
-    const isDarkMode = tg.colorScheme === 'dark';
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-
-    // --- 2. UYGULAMA DURUMU (STATE) ---
-    // Gerçek bir uygulamada bu veriler API'den gelir.
-    const appState = {
-        user: {
-            balance: 0,
-            assets: [],
-            transactions: []
-        },
-        market: {
-            price: 0,
-            change24h: 0
-        },
-        walletAddress: 'UQB2hUHdOFJHUwZRYsKRBO4kJeufMHbmaBC1WOPIkxRPIOcC'
-    };
-
-    // --- 3. DOM ELEMENTLERİNİ SEÇME ---
+    // 2. DOM ELEMENTLERİ
     const elements = {
-        pageTitle: document.getElementById('pageTitle'),
-        sections: document.querySelectorAll('.app-section'),
-        navButtons: document.querySelectorAll('.nav-btn'),
-        // Dashboard
-        totalBalanceAmount: document.getElementById('totalBalanceAmount'),
-        totalBalanceEquivalent: document.getElementById('totalBalanceEquivalent'),
-        transactionsContainer: document.getElementById('transactionsContainer'),
-        // Cüzdan
-        assetsContainer: document.getElementById('assetsContainer'),
-        // Piyasa
-        marketPrice: document.getElementById('marketPrice'),
-        marketChange: document.getElementById('marketChange'),
-        // Modallar
-        modals: document.querySelectorAll('.modal'),
-        // Yan Menü
-        sideMenu: document.getElementById('sideMenu'),
-        overlay: document.querySelector('.overlay'),
-        // Kullanıcı Bilgileri
-        userName: document.getElementById('userName'),
-        userHandle: document.getElementById('userHandle'),
-        userAvatar: document.getElementById('userAvatar'),
-        // QR Kod
-        qrCodeWrapper: document.getElementById('qrCodeWrapper'),
-        walletAddressSpan: document.getElementById('walletAddress'),
+        price: document.getElementById('price'),
+        marketCap: document.getElementById('marketCap'),
+        priceChange: document.getElementById('priceChange'),
+        jettonDescription: document.getElementById('jettonDescription'),
+        holderCount: document.getElementById('holderCount'),
+        totalSupply: document.getElementById('totalSupply'),
+        contractAddress: document.getElementById('contractAddress'),
+        tabButtons: document.querySelectorAll('.tab-btn'),
+        tabPanes: document.querySelectorAll('.tab-pane'),
+        clickableCards: document.querySelectorAll('.card'),
+        connectWalletBtn: document.getElementById('connectWalletBtn'),
+        toastNotification: document.getElementById('toastNotification'),
     };
+    let toastTimeout;
 
-    // --- 4. RENDER FONKSİYONLARI (ARAYÜZÜ GÜNCELLEME) ---
-
-    const renderDashboard = () => {
-        const { balance } = appState.user;
-        const { price } = appState.market;
-        elements.totalBalanceAmount.textContent = `${balance.toFixed(2)} LKURD`;
-        elements.totalBalanceEquivalent.textContent = `≈ ${(balance * price).toLocaleString('tr-TR', { style: 'currency', currency: 'USD' })}`;
-    };
-
-    const renderTransactions = () => {
-        const { transactions } = appState.user;
-        elements.transactionsContainer.innerHTML = ''; // Temizle
-        if (transactions.length === 0) {
-            elements.transactionsContainer.innerHTML = '<p class="hint-text">Henüz işlem yok.</p>';
-            return;
+    // 3. VERİ ÇEKME
+    const fetchTokenData = async () => {
+        const jettonAddress = 'EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap';
+        const apiUrl = `https://tonapi.io/v2/jettons/${jettonAddress}`;
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            const data = await response.json();
+            updateUI(data);
+        } catch (error) {
+            console.error('Veri çekme hatası:', error);
+            showToast('Veri yüklenemedi.');
         }
-        transactions.forEach(tx => {
-            const isSent = tx.type === 'send';
-            const item = document.createElement('div');
-            item.className = 'transaction-item';
-            item.innerHTML = `
-                <div class="tx-icon ${isSent ? 'sent' : 'received'}">
-                    <i class="fas fa-arrow-${isSent ? 'up' : 'down'}"></i>
-                </div>
-                <div class="tx-details">
-                    <h4>${tx.party}</h4>
-                    <p>${tx.date}</p>
-                </div>
-                <div class="tx-amount ${isSent ? 'sent' : 'received'}">
-                    ${isSent ? '-' : '+'}${tx.amount.toFixed(2)} LKURD
-                </div>
-            `;
-            elements.transactionsContainer.appendChild(item);
-        });
-    };
-    
-    const renderMarket = () => {
-        const { price, change24h } = appState.market;
-        elements.marketPrice.textContent = price.toLocaleString('tr-TR', { style: 'currency', currency: 'USD' });
-        elements.marketChange.textContent = `${change24h.toFixed(2)}%`;
-        elements.marketChange.className = change24h >= 0 ? 'positive' : 'negative';
     };
 
-    // --- 5. VERİ YÜKLEME VE İLK KURULUM ---
+    // 4. ARAYÜZ GÜNCELLEME
+    const updateUI = (data) => {
+        const { market_data, metadata, holders_count, total_supply } = data;
 
-    const loadInitialData = () => {
-        // Simüle edilmiş API çağrısı
-        setTimeout(() => {
-            // State'i güncelle
-            appState.user = {
-                balance: 1245.50,
-                transactions: [
-                    { type: 'receive', amount: 50.00, party: 'Ahmet Y.', date: '10 dk önce' },
-                    { type: 'send', amount: 25.50, party: 'Market', date: 'Dün' },
-                    { type: 'receive', amount: 1200.00, party: 'STON.fi', date: '2 gün önce' }
-                ]
-            };
-            appState.market = { price: 0.1234, change24h: 5.25 };
-            
-            // Arayüzü güncelle
-            renderDashboard();
-            renderTransactions();
-            renderMarket();
-        }, 1500); // 1.5 saniye bekleme
-    };
-    
-    const setupUserInfo = () => {
-        const user = tg.initDataUnsafe.user;
-        if (!user) return;
+        const formatCurrency = (val) => val ? `$${Math.round(val).toLocaleString('en-US')}` : '---';
         
-        elements.userName.textContent = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-        elements.userHandle.textContent = user.username ? `@${user.username}` : 'ID: ' + user.id;
+        elements.price.textContent = market_data?.price ? `$${market_data.price.toFixed(5)}` : '---';
+        elements.marketCap.textContent = formatCurrency(market_data?.market_cap_usd);
         
-        if (user.photo_url) {
-            elements.userAvatar.style.backgroundImage = `url(${user.photo_url})`;
+        if (market_data?.price_change_24h) {
+            const change = parseFloat(market_data.price_change_24h);
+            elements.priceChange.textContent = `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+            elements.priceChange.className = `value ${change >= 0 ? 'positive' : 'negative'}`;
         } else {
-            const initials = (user.first_name ? user.first_name.charAt(0) : '') + (user.last_name ? user.last_name.charAt(0) : '');
-            elements.userAvatar.textContent = initials || 'L';
+            elements.priceChange.textContent = '---';
+        }
+
+        elements.jettonDescription.textContent = metadata?.description || 'Açıklama mevcut değil.';
+        elements.holderCount.textContent = holders_count?.toLocaleString('en-US') || '---';
+        
+        if (total_supply && metadata?.decimals) {
+            const supply = (BigInt(total_supply) / BigInt(10 ** metadata.decimals)).toString();
+            elements.totalSupply.textContent = `${parseInt(supply).toLocaleString('en-US')} ${metadata.symbol}`;
+        } else {
+            elements.totalSupply.textContent = '---';
+        }
+
+        if (metadata?.address) {
+            const address = metadata.address;
+            elements.contractAddress.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+            elements.contractAddress.href = `https://tonviewer.com/${address}`;
         }
     };
 
-    // --- 6. OLAY DİNLEYİCİLERİ (EVENT LISTENERS) ---
-
+    // 5. OLAY DİNLEYİCİLERİ VE İŞLEVLER
     const setupEventListeners = () => {
-        // Navigasyon
-        elements.navButtons.forEach(btn => {
-            btn.addEventListener('click', () => navigateTo(btn.dataset.section));
+        // Sekme Navigasyonu
+        elements.tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                elements.tabButtons.forEach(btn => btn.classList.remove('active'));
+                elements.tabPanes.forEach(pane => pane.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
         });
 
-        // Yan Menü
-        document.getElementById('menuToggleBtn').addEventListener('click', () => toggleMenu(true));
-        document.getElementById('closeMenuBtn').addEventListener('click', () => toggleMenu(false));
-        elements.overlay.addEventListener('click', () => {
-            toggleMenu(false);
-            closeAllModals();
-        });
-        
-        // Modallar
-        document.querySelectorAll('[data-modal]').forEach(btn => {
-            btn.addEventListener('click', () => openModal(btn.dataset.modal));
-        });
-        document.querySelectorAll('.modal-close-btn').forEach(btn => {
-            btn.addEventListener('click', closeAllModals);
+        // Tıklanabilir Kartlar
+        elements.clickableCards.forEach(card => {
+            card.addEventListener('click', () => {
+                tg.HapticFeedback.impactOccurred('light');
+                const link = card.dataset.link || card.dataset.tgLink;
+                if (card.dataset.link) tg.openLink(link);
+                if (card.dataset.tgLink) tg.openTelegramLink(link);
+            });
         });
 
-        // Dış Linkler
-        document.querySelectorAll('[data-link]').forEach(el => {
-            el.addEventListener('click', () => tg.openLink(el.dataset.link));
-        });
-        document.querySelectorAll('[data-tg-link]').forEach(el => {
-            el.addEventListener('click', () => tg.openTelegramLink(el.dataset.tgLink));
-        });
-        
-        // Adres Kopyalama ve Paylaşma
-        document.getElementById('copyAddressBtn').addEventListener('click', copyWalletAddress);
-        document.getElementById('shareAddressBtn').addEventListener('click', shareWalletAddress);
-        
-        // Kapatma butonu
-        document.getElementById('logoutBtn').addEventListener('click', () => tg.close());
-    };
-
-    // --- 7. YARDIMCI FONKSİYONLAR ---
-
-    const navigateTo = (sectionId) => {
-        elements.sections.forEach(s => s.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
-
-        elements.navButtons.forEach(b => b.classList.remove('active'));
-        document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
-        
-        elements.pageTitle.textContent = document.querySelector(`.nav-btn[data-section="${sectionId}"] span`).textContent;
-    };
-
-    const toggleMenu = (show) => {
-        elements.sideMenu.classList.toggle('show', show);
-        elements.overlay.classList.toggle('show', show);
-    };
-
-    const openModal = (modalId) => {
-        closeAllModals();
-        document.getElementById(modalId)?.classList.add('show');
-        elements.overlay.classList.add('show');
-        if (modalId === 'receiveModal') {
-            generateQRCode();
-            elements.walletAddressSpan.textContent = appState.walletAddress;
-        }
-    };
-
-    const closeAllModals = () => {
-        elements.modals.forEach(m => m.classList.remove('show'));
-        elements.overlay.classList.remove('show');
-    };
-    
-    const generateQRCode = () => {
-        elements.qrCodeWrapper.innerHTML = ''; // Temizle
-        const qrImg = document.createElement('img');
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ton://transfer/${appState.walletAddress}`;
-        elements.qrCodeWrapper.appendChild(qrImg);
-    };
-    
-    const copyWalletAddress = () => {
-        tg.writeText(appState.walletAddress, () => {
-            tg.HapticFeedback.notificationOccurred('success');
-            tg.showAlert('Cüzdan adresi panoya kopyalandı!');
+        // Cüzdan Bağlantı Butonu
+        elements.connectWalletBtn.addEventListener('click', () => {
+            tg.HapticFeedback.notificationOccurred('warning');
+            showToast('Cüzdan bağlantı özelliği yakında eklenecektir.');
         });
     };
-    
-    const shareWalletAddress = () => {
-        const url = `https://t.me/share/url?url=${encodeURIComponent(appState.walletAddress)}&text=${encodeURIComponent('Lira Kurdi cüzdan adresim:')}`;
-        tg.openTelegramLink(url);
+
+    const showToast = (message, duration = 3000) => {
+        if (toastTimeout) clearTimeout(toastTimeout);
+        elements.toastNotification.textContent = message;
+        elements.toastNotification.classList.add('active');
+        toastTimeout = setTimeout(() => {
+            elements.toastNotification.classList.remove('active');
+        }, duration);
     };
 
-    // --- UYGULAMAYI BAŞLAT ---
+    // 6. UYGULAMAYI BAŞLAT
     const init = () => {
-        setupUserInfo();
+        fetchTokenData();
         setupEventListeners();
-        loadInitialData();
     };
 
     init();
