@@ -1,141 +1,437 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no">
     <title>Lira Kurdi Merkezi</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: 'Roboto', 'Google Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .font-googlesans {
+            font-family: 'Google Sans', 'Roboto', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        @keyframes pulse {
+            50% { opacity: .5; }
+        }
+        .skeleton {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <!-- Üst Bar -->
-        <header class="app-header">
-            <div class="logo-title">
-                <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo">
-                <h1>Lira Kurdi</h1>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 overflow-x-hidden">
+
+    <!-- Yükleme Ekranı (Intro) -->
+    <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ease-out">
+        <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-20 h-20 rounded-full shadow-lg">
+        <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full spinner"></div>
+    </div>
+
+    <!-- Dil Seçim Modalı -->
+    <div id="language-modal-backdrop" class="fixed inset-0 bg-black/50 z-[101] hidden transition-opacity duration-300"></div>
+    <div id="language-modal" class="fixed bottom-0 left-0 right-0 z-[102] bg-white dark:bg-slate-800 rounded-t-2xl p-5 transform transition-transform duration-300 ease-in-out translate-y-full">
+        <h3 class="font-googlesans text-lg font-medium text-center mb-4" data-translate-key="select_language">Dil Seçin</h3>
+        <div class="space-y-2">
+            <button data-lang="tr" class="lang-option w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                <img src="https://flagcdn.com/w40/tr.png" alt="Türkçe" class="w-6 h-auto rounded-sm">
+                <span>Türkçe</span>
+            </button>
+            <button data-lang="en" class="lang-option w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                <img src="https://flagcdn.com/w40/gb.png" alt="English" class="w-6 h-auto rounded-sm">
+                <span>English</span>
+            </button>
+            <button data-lang="ku" class="lang-option w-full flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Kurdistan.svg/40px-Flag_of_Kurdistan.svg.png" alt="Kurdî" class="w-6 h-auto rounded-sm">
+                <span>Kurdî (Kurmancî)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Off-canvas Panel (Proje Hakkında) -->
+    <div id="offcanvas-backdrop" class="fixed inset-0 bg-black/50 z-[99] hidden transition-opacity duration-300"></div>
+    <aside id="offcanvas-panel" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-slate-800 shadow-lg z-[100] transform transition-transform duration-300 ease-in-out translate-x-full p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-googlesans text-xl font-medium text-slate-900 dark:text-white" data-translate-key="about_project">Proje Hakkında</h3>
+            <button id="close-offcanvas-btn" class="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="overflow-y-auto">
+            <p id="jettonDescription" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-2">
+                <span class="skeleton block w-full h-4 bg-slate-300 dark:bg-slate-600 rounded-md"></span>
+                <span class="skeleton block w-5/6 h-4 bg-slate-300 dark:bg-slate-600 rounded-md"></span>
+                <span class="skeleton block w-3/4 h-4 bg-slate-300 dark:bg-slate-600 rounded-md"></span>
+            </p>
+        </div>
+    </aside>
+
+    <div id="app-container" class="max-w-3xl mx-auto bg-slate-50 dark:bg-slate-800 shadow-lg min-h-screen flex flex-col">
+        <!-- Üst Bar (App Header) -->
+        <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+            <div class="flex items-center gap-3">
+                <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-10 h-10 rounded-full">
+                <h1 class="text-xl font-bold font-googlesans text-slate-900 dark:text-white">Lira Kurdi</h1>
             </div>
-            <button class="connect-wallet-btn" id="connectWalletBtn">Cüzdan Bağla</button>
+            <div class="flex items-center gap-2">
+                <button id="language-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">language</span>
+                </button>
+                <button id="info-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">info</span>
+                </button>
+            </div>
         </header>
 
-        <!-- Ana Veri Paneli -->
-        <section class="hero-stats">
-            <div class="stat-item">
-                <span class="label">Fiyat (USD)</span>
-                <span class="value" id="price"><div class="skeleton"></div></span>
-            </div>
-            <div class="stat-item">
-                <span class="label">Piyasa Değeri</span>
-                <span class="value" id="marketCap"><div class="skeleton"></div></span>
-            </div>
-            <div class="stat-item">
-                <span class="label">24s Değişim</span>
-                <span class="value" id="priceChange"><div class="skeleton"></div></span>
+        <!-- Ana Bilgi ve Hızlı Erişim Paneli -->
+        <section class="p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex flex-wrap justify-center gap-2 text-center">
+                <div class="quick-stat" id="top-contract-card">
+                    <span class="material-symbols-outlined text-sm">receipt_long</span>
+                    <div class="text-left">
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="contract">Kontrat</span>
+                        <strong id="top-contract" class="block font-mono text-xs h-4"><span class="skeleton inline-block w-20 h-3 bg-slate-300 dark:bg-slate-600 rounded"></span></strong>
+                    </div>
+                </div>
+                <div class="quick-stat">
+                    <span class="material-symbols-outlined text-sm">layers</span>
+                    <div class="text-left">
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="total_supply">Toplam Arz</span>
+                        <strong id="top-total-supply" class="block font-medium text-xs h-4"><span class="skeleton inline-block w-24 h-3 bg-slate-300 dark:bg-slate-600 rounded"></span></strong>
+                    </div>
+                </div>
+                <div class="quick-stat">
+                    <span class="material-symbols-outlined text-sm">group</span>
+                     <div class="text-left">
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="holders">Sahipler</span>
+                        <strong id="top-holder-count" class="block font-medium text-xs h-4"><span class="skeleton inline-block w-12 h-3 bg-slate-300 dark:bg-slate-600 rounded"></span></strong>
+                    </div>
+                </div>
+                <div class="quick-stat support-card" data-tg-link="https://t.me/tribute/app?startapp=suJQ">
+                    <span class="material-symbols-outlined text-sm text-amber-500">workspace_premium</span>
+                    <span class="text-xs font-medium" data-translate-key="subscription">Abonelik</span>
+                </div>
+                <div class="quick-stat support-card" data-tg-link="https://t.me/tribute/app?startapp=dqji">
+                    <span class="material-symbols-outlined text-sm text-pink-500">favorite</span>
+                    <span class="text-xs font-medium" data-translate-key="donate">Bağış Yap</span>
+                </div>
             </div>
         </section>
 
-        <!-- Sekme Navigasyonu -->
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="info">Genel Bakış</button>
-            <button class="tab-btn" data-tab="services">Servisler</button>
-            <button class="tab-btn" data-tab="community">Topluluk</button>
-        </nav>
-
-        <!-- Sekme İçerikleri -->
-        <main class="tab-content">
-            <!-- Genel Bakış Sekmesi -->
-            <div class="tab-pane active" id="info">
-                <div class="content-card">
-                    <h3>Proje Hakkında</h3>
-                    <p id="jettonDescription"><span class="skeleton-text"></span><span class="skeleton-text"></span></p>
-                </div>
-                <div class="content-card">
-                    <h3>Jeton Detayları</h3>
-                    <ul class="details-list">
-                        <li><span>Sahipler</span><strong id="holderCount"><span class="skeleton"></span></strong></li>
-                        <li><span>Toplam Arz</span><strong id="totalSupply"><span class="skeleton"></span></strong></li>
-                        <li>
-                            <span>Kontrat</span>
-                            <a href="#" id="contractAddress" class="address-link" target="_blank">
-                                <span class="skeleton"></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+        <!-- Ana İçerik -->
+        <main class="p-4 flex-grow">
+            <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 mb-6">
+                 <h2 id="welcome-message" class="font-googlesans text-xl font-medium text-slate-900 dark:text-white"></h2>
             </div>
 
-            <!-- Servisler Sekmesi -->
-            <div class="tab-pane" id="services">
-                <div class="grid">
-                    <div class="card" data-tg-link="https://t.me/LKURDMovieBot">
-                        <i class="fas fa-film icon movie"></i>
-                        <span>LKURD Movie</span>
+            <!-- Servisler -->
+            <section id="services" class="mb-6">
+                <h3 class="font-googlesans text-lg font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="services_title">Servisler</h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="service-card" data-tg-link="https://t.me/LKURDMovieBot">
+                        <span class="material-symbols-outlined icon movie">movie</span>
+                        <div class="text-left">
+                            <span class="font-medium">LKURD Movie</span>
+                            <p class="description" data-translate-key="service_movie_desc">Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.</p>
+                        </div>
                     </div>
-                    <div class="card" data-tg-link="https://t.me/aaGameTONBot">
-                        <i class="fas fa-gamepad icon game"></i>
-                        <span>TON Games</span>
+                    <div class="service-card" data-tg-link="https://t.me/aaGameTONBot">
+                        <span class="material-symbols-outlined icon game">stadia_controller</span>
+                        <div class="text-left">
+                            <span class="font-medium">TON Games</span>
+                            <p class="description" data-translate-key="service_game_desc">Efsane oyun "aa" ve daha fazlasını ücretsiz oyna.</p>
+                        </div>
                     </div>
-                    <div class="card" data-tg-link="https://t.me/tribute/app?startapp=suJQ">
-                        <i class="fas fa-star icon tribute"></i>
-                        <span>Abonelik</span>
+                     <div class="service-card" data-tg-link="https://t.me/tribute/app?startapp=pgXq">
+                        <span class="material-symbols-outlined icon ebook">auto_stories</span>
+                        <div class="text-left">
+                            <span class="font-medium">Dr. Rıza Nur E-Kitap</span>
+                            <p class="description" data-translate-key="service_ebook_desc">Tarihi ve kültürel e-kitaplara erişim sağlayın.</p>
+                        </div>
                     </div>
-                    <div class="card" data-tg-link="https://t.me/tribute/app?startapp=dqji">
-                        <i class="fas fa-hand-holding-heart icon donate"></i>
-                        <span>Bağış Yap</span>
-                    </div>
-                     <div class="card" data-tg-link="https://t.me/tribute/app?startapp=pgXq">
-                        <i class="fas fa-book-open icon ebook"></i>
-                        <span>E-Kitap</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Topluluk Sekmesi -->
-            <div class="tab-pane" id="community">
-                <div class="grid">
-                    <div class="card" data-tg-link="https://t.me/LiraKurdiChat">
-                        <i class="fab fa-telegram-plane icon telegram"></i>
-                        <span>Sohbet Grubu</span>
-                    </div>
-                    <div class="card" data-link="https://x.com/LiraKurdi">
-                        <i class="fab fa-twitter icon twitter"></i>
-                        <span>X (Twitter)</span>
-                    </div>
-                    <div class="card" data-link="https://www.instagram.com/lirakurdi/">
-                        <i class="fab fa-instagram icon instagram"></i>
-                        <span>Instagram</span>
-                    </div>
-                    <div class="card" data-link="https://www.youtube.com/@LiraKurdi">
-                        <i class="fab fa-youtube icon youtube"></i>
-                        <span>YouTube</span>
-                    </div>
-                    <div class="card" data-link="https://www.facebook.com/LiraKurdiOfficial">
-                        <i class="fab fa-facebook icon facebook"></i>
-                        <span>Facebook</span>
-                    </div>
-                    <div class="card" data-link="https://www.tiktok.com/@lira.kurdi">
-                        <i class="fab fa-tiktok icon tiktok"></i>
-                        <span>TikTok</span>
-                    </div>
-                    <div class="card" data-link="https://github.com/LiraKurdi/Lira-Kurdi">
-                        <i class="fab fa-github icon github"></i>
-                        <span>GitHub</span>
-                    </div>
-                    <div class="card" data-link="mailto:kurdishlira@gmail.com">
-                        <i class="fas fa-envelope icon email"></i>
-                        <span>E-Posta</span>
+                    <div class="service-card" data-tg-link="https://t.me/TheOpenNationsBot">
+                        <span class="material-symbols-outlined icon map">public</span>
+                        <div class="text-left">
+                            <span class="font-medium">Open Nations</span>
+                            <p class="description" data-translate-key="service_meta_desc">Telegram ve TON'un 3D Pixel MetaWorld'ü.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
+            
+            <!-- Topluluk -->
+            <section id="community">
+                <h3 class="font-googlesans text-lg font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="community_title">Topluluk</h3>
+                <div class="grid grid-cols-2 gap-3">
+                   <div class="community-card" data-tg-link="https://t.me/LiraKurdiChat">
+                        <i class="fab fa-telegram-plane text-[#2AABEE]"></i><span data-translate-key="community_chat">Sohbet Grubu</span>
+                   </div>
+                   <div class="community-card" data-link="https://x.com/LiraKurdi">
+                        <i class="fab fa-twitter text-[#1DA1F2]"></i><span>X (Twitter)</span>
+                   </div>
+                   <div class="community-card" data-link="https://www.instagram.com/lirakurdi/">
+                        <i class="fab fa-instagram text-[#C13584]"></i><span>Instagram</span>
+                   </div>
+                   <div class="community-card" data-link="https://www.youtube.com/@LiraKurdi">
+                        <i class="fab fa-youtube text-[#FF0000]"></i><span>YouTube</span>
+                   </div>
+                   <div class="community-card" data-link="https://www.facebook.com/LiraKurdiOfficial">
+                        <i class="fab fa-facebook text-[#1877F2]"></i><span>Facebook</span>
+                   </div>
+                   <div class="community-card" data-link="https://www.tiktok.com/@lira.kurdi">
+                        <i class="fab fa-tiktok text-black dark:text-white"></i><span>TikTok</span>
+                   </div>
+                     <div class="community-card" data-link="https://github.com/LiraKurdi/Lira-Kurdi">
+                        <i class="fab fa-github text-black dark:text-white"></i><span>GitHub</span>
+                    </div>
+                    <div class="community-card" data-link="mailto:kurdishlira@gmail.com">
+                        <span class="material-symbols-outlined text-slate-500">mail</span><span data-translate-key="community_email">E-Posta</span>
+                    </div>
+                </div>
+            </section>
         </main>
         
-        <!-- Toast Bildirimi -->
-        <div class="toast" id="toastNotification"></div>
+        <!-- Footer -->
+        <footer class="text-center p-4 mt-6 border-t border-slate-200 dark:border-slate-700">
+            <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Copyright powered by @LiraKurdi</p>
+        </footer>
     </div>
-    <script src="assets/js/main.js"></script>
+
+    <!-- Toast Bildirimi -->
+    <div id="toastNotification" class="fixed bottom-5 left-1/2 -translate-x-1/2 translate-y-20 bg-slate-900 text-white text-sm py-3 px-5 rounded-full shadow-lg opacity-0 transition-all duration-300 pointer-events-none"></div>
+
+    <!-- Font Awesome (Topluluk ikonları için) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <script type="module">
+        const applyStyles = (selector, styles) => {
+            document.querySelectorAll(selector).forEach(el => el.classList.add(...styles.split(' ')));
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tg = window.Telegram.WebApp;
+            try {
+                tg.ready();
+                tg.expand();
+            } catch (e) {
+                console.warn("Telegram WebApp is not available.");
+            }
+
+            // --- STYLING ---
+            applyStyles('.quick-stat', 'flex items-center gap-2 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 flex-grow');
+            applyStyles('.support-card', 'cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors justify-center');
+            applyStyles('.service-card', 'flex items-center justify-start gap-4 p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-left cursor-pointer transition-all hover:shadow-lg hover:dark:bg-slate-700 hover:-translate-y-1');
+            applyStyles('.service-card .icon', 'text-3xl');
+            applyStyles('.service-card .description', 'text-xs text-slate-500 dark:text-slate-400 mt-1');
+            applyStyles('.community-card', 'flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer transition-all hover:shadow-md hover:dark:bg-slate-700');
+            applyStyles('.community-card i, .community-card .material-symbols-outlined', 'text-xl');
+            applyStyles('.community-card span', 'text-sm font-medium text-slate-700 dark:text-slate-200');
+            
+            document.querySelector('.icon.movie').classList.add('text-red-600');
+            document.querySelector('.icon.game').classList.add('text-green-600');
+            document.querySelector('.icon.ebook').classList.add('text-purple-600');
+            document.querySelector('.icon.map').classList.add('text-sky-600');
+
+            // --- DOM ELEMENTS ---
+            const elements = {
+                splashScreen: document.getElementById('splash-screen'),
+                infoBtn: document.getElementById('info-btn'),
+                languageBtn: document.getElementById('language-btn'),
+                offcanvasPanel: document.getElementById('offcanvas-panel'),
+                offcanvasBackdrop: document.getElementById('offcanvas-backdrop'),
+                closeOffcanvasBtn: document.getElementById('close-offcanvas-btn'),
+                languageModal: document.getElementById('language-modal'),
+                languageModalBackdrop: document.getElementById('language-modal-backdrop'),
+                langOptions: document.querySelectorAll('.lang-option'),
+                topHolderCount: document.getElementById('top-holder-count'),
+                topTotalSupply: document.getElementById('top-total-supply'),
+                topContract: document.getElementById('top-contract'),
+                clickableCards: document.querySelectorAll('.support-card, .service-card, .community-card'),
+                toastNotification: document.getElementById('toastNotification'),
+                welcomeMessage: document.getElementById('welcome-message'),
+                topContractCard: document.getElementById('top-contract-card'),
+            };
+
+            // --- TRANSLATIONS ---
+            const translations = {
+                en: {
+                    welcome: "Welcome, ",
+                    services_title: "Services",
+                    community_title: "Community",
+                    about_project: "About Project",
+                    contract: "Contract",
+                    total_supply: "Total Supply",
+                    holders: "Holders",
+                    subscription: "Subscription",
+                    donate: "Donate",
+                    select_language: "Select Language",
+                    community_chat: "Chat Group",
+                    community_email: "E-Mail",
+                    service_movie_desc: "Free online Telegram Digital Content Platform. Like Netflix.",
+                    service_game_desc: "Play the legendary game 'aa' and more for free.",
+                    service_ebook_desc: "Access historical and cultural e-books.",
+                    service_meta_desc: "3D Pixel MetaWorld of Telegram and TON."
+                },
+                tr: {
+                    welcome: "Merhaba, ",
+                    services_title: "Servisler",
+                    community_title: "Topluluk",
+                    about_project: "Proje Hakkında",
+                    contract: "Kontrat",
+                    total_supply: "Toplam Arz",
+                    holders: "Sahipler",
+                    subscription: "Abonelik",
+                    donate: "Bağış Yap",
+                    select_language: "Dil Seçin",
+                    community_chat: "Sohbet Grubu",
+                    community_email: "E-Posta",
+                    service_movie_desc: "Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.",
+                    service_game_desc: "Efsane oyun 'aa' ve daha fazlasını ücretsiz oyna.",
+                    service_ebook_desc: "Tarihi ve kültürel e-kitaplara erişim sağlayın.",
+                    service_meta_desc: "Telegram ve TON'un 3D Pixel MetaWorld'ü."
+                },
+                ku: {
+                    welcome: "Bi xêr hatî, ",
+                    services_title: "Xizmet",
+                    community_title: "Civat",
+                    about_project: "Derbarê Projeyê",
+                    contract: "Peyman",
+                    total_supply: "Tevahî Pêşkêşî",
+                    holders: "Xwedî",
+                    subscription: "Abonetî",
+                    donate: "Beşdarî Bike",
+                    select_language: "Ziman Hilbijêre",
+                    community_chat: "Koma Sohbetê",
+                    community_email: "E-name",
+                    service_movie_desc: "Platforma Naveroka Dîjîtal a Telegramê ya serhêl a belaş. Mîna Netflix.",
+                    service_game_desc: "Lîstika efsanewî 'aa' û bêtir belaş bilîzin.",
+                    service_ebook_desc: "Bigihîjin e-pirtûkên dîrokî û çandî.",
+                    service_meta_desc: "MetaWorlda 3D Pixel a Telegram û TON."
+                }
+            };
+            
+            // --- FUNCTIONS ---
+            const setLanguage = (lang) => {
+                document.documentElement.lang = lang;
+                const langStrings = translations[lang];
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (langStrings[key]) {
+                        if (key === 'welcome') {
+                            const userName = tg.initDataUnsafe?.user?.first_name || '';
+                            el.textContent = langStrings[key] + userName;
+                        } else {
+                            el.textContent = langStrings[key];
+                        }
+                    }
+                });
+                localStorage.setItem('appLanguage', lang);
+            };
+
+            const fetchTokenData = async () => {
+                const jettonAddress = 'EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap';
+                const apiUrl = `https://tonapi.io/v2/jettons/${jettonAddress}`;
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    const data = await response.json();
+                    updateUI(data);
+                } catch (error) {
+                    console.error('Veri çekme hatası:', error);
+                }
+            };
+
+            const updateUI = (data) => {
+                const { metadata, holders_count, total_supply } = data;
+                document.getElementById('jettonDescription').textContent = metadata?.description || '';
+                elements.topHolderCount.textContent = holders_count?.toLocaleString('en-US') || '---';
+                if (total_supply && metadata?.decimals) {
+                    const supply = (BigInt(total_supply) / BigInt(10 ** metadata.decimals)).toString();
+                    elements.topTotalSupply.textContent = `${parseInt(supply).toLocaleString('en-US')} ${metadata.symbol}`;
+                } else {
+                    elements.topTotalSupply.textContent = '---';
+                }
+                if (metadata?.address) {
+                    const address = metadata.address;
+                    elements.topContract.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+                    elements.topContractCard.onclick = () => {
+                        tg.HapticFeedback.impactOccurred('light');
+                        tg.openLink(`https://tonviewer.com/${address}`);
+                    };
+                    elements.topContractCard.classList.add('cursor-pointer', 'hover:bg-slate-200', 'dark:hover:bg-slate-700', 'transition-colors');
+                }
+            };
+
+            const setupEventListeners = () => {
+                elements.clickableCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        tg.HapticFeedback.impactOccurred('light');
+                        const link = card.dataset.link || card.dataset.tgLink;
+                        if (card.dataset.link) tg.openLink(link);
+                        if (card.dataset.tgLink) tg.openTelegramLink(link);
+                    });
+                });
+
+                const toggleOffcanvas = () => {
+                    elements.offcanvasPanel.classList.toggle('translate-x-full');
+                    elements.offcanvasBackdrop.classList.toggle('hidden');
+                };
+                elements.infoBtn.addEventListener('click', toggleOffcanvas);
+                elements.closeOffcanvasBtn.addEventListener('click', toggleOffcanvas);
+                elements.offcanvasBackdrop.addEventListener('click', toggleOffcanvas);
+
+                const toggleLanguageModal = () => {
+                    elements.languageModal.classList.toggle('translate-y-full');
+                    elements.languageModalBackdrop.classList.toggle('hidden');
+                };
+                elements.languageBtn.addEventListener('click', toggleLanguageModal);
+                elements.languageModalBackdrop.addEventListener('click', toggleLanguageModal);
+                elements.langOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        setLanguage(option.dataset.lang);
+                        toggleLanguageModal();
+                    });
+                });
+            };
+
+            const init = async () => {
+                const savedLang = localStorage.getItem('appLanguage') || 'tr';
+                setLanguage(savedLang);
+                
+                setupEventListeners();
+                await fetchTokenData();
+
+                setTimeout(() => {
+                    elements.splashScreen.classList.add('opacity-0');
+                    setTimeout(() => elements.splashScreen.style.display = 'none', 500);
+                }, 1000);
+            };
+
+            init();
+        });
+    </script>
 </body>
 </html>
