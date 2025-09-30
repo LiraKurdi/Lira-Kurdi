@@ -1,489 +1,295 @@
 <!DOCTYPE html>
-<html lang="tr" class="scroll-smooth">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no">
-    <title>Lira Kurdi Merkezi</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Lira Kurdi | Bilgi Merkezi</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
+        :root {
+            --bg-color: #f4f4f5; --text-color: #18181b;
+            --secondary-bg-color: #ffffff; --hint-color: #71717a;
+            --primary-color: #2563eb; --primary-text-color: #ffffff;
+            --border-color: #e4e4e7;
+        }
+        html.dark {
+            --bg-color: #000000; --text-color: #fafafa;
+            --secondary-bg-color: #18181b; --hint-color: #a1a1aa;
+            --primary-color: #3b82f6; --primary-text-color: #fafafa;
+            --border-color: #27272a;
+        }
         body {
-            font-family: 'Roboto', 'Google Sans', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            background-color: #f8f9fa; /* Google's light gray background */
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color);
+            color: var(--text-color); transition: background-color 0.2s ease, color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
-        .dark body {
-            background-color: #202124; /* Google's dark background */
+        .card { background-color: var(--secondary-bg-color); border: 1px solid var(--border-color); }
+        .btn-primary { background-color: var(--primary-color); color: var(--primary-text-color); }
+        .btn-secondary { color: var(--primary-color); border-color: var(--primary-color); }
+        .lang-btn.active { background-color: var(--primary-color); color: var(--primary-text-color); }
+        @keyframes pulse { 50% { opacity: .7; } }
+        .skeleton { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: rgba(128,128,128,0.2); border-radius: 0.375rem; }
+        
+        .collapsible-content {
+            display: grid;
+            overflow: hidden;
+            transition: grid-template-rows 0.3s ease-in-out;
+            grid-template-rows: 0fr;
         }
-        .font-googlesans {
-            font-family: 'Google Sans', 'Roboto', sans-serif;
+        .collapsible.open .collapsible-content {
+            grid-template-rows: 1fr;
         }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        .collapsible-inner {
+            min-height: 0;
+            padding-top: 1rem;
         }
-        /* Skeleton loading animation */
-        @keyframes pulse {
-            50% { opacity: .6; }
-        }
-        .skeleton {
-            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-            background-color: #e2e8f0;
-        }
-        .dark .skeleton {
-            background-color: #4a5568;
-        }
-        /* Spinner animation */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
+        .collapsible.open .chevron-icon { transform: rotate(180deg); }
+        .chevron-icon { transition: transform 0.3s ease-in-out; }
+        .copy-trigger:active { transform: scale(0.98); background-color: rgba(128, 128, 128, 0.1); }
     </style>
 </head>
-<body class="text-slate-800 dark:text-slate-200 overflow-x-hidden">
-
-    <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-white dark:bg-[#202124] transition-opacity duration-500 ease-out">
-        <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-24 h-24 rounded-full shadow-lg">
-        <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full spinner"></div>
-    </div>
-
-    <div id="language-modal-backdrop" class="fixed inset-0 bg-black/60 z-[101] hidden transition-opacity duration-300"></div>
-    <div id="language-modal" class="fixed bottom-0 left-0 right-0 z-[102] bg-white dark:bg-slate-800 rounded-t-3xl p-5 transform transition-transform duration-300 ease-in-out translate-y-full">
-        <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4"></div>
-        <h3 class="font-googlesans text-xl font-medium text-center mb-4" data-translate-key="select_language">Dil Seçin</h3>
-        <div class="space-y-2">
-            <button data-lang="tr" class="lang-option w-full flex items-center gap-4 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200">
-                <img src="https://flagcdn.com/w40/tr.png" alt="Türkçe" class="w-8 h-auto rounded-md">
-                <span class="font-medium">Türkçe</span>
-            </button>
-            <button data-lang="en" class="lang-option w-full flex items-center gap-4 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200">
-                <img src="https://flagcdn.com/w40/gb.png" alt="English" class="w-8 h-auto rounded-md">
-                <span class="font-medium">English</span>
-            </button>
-            <button data-lang="ku" class="lang-option w-full flex items-center gap-4 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Flag_of_Kurdistan.svg/40px-Flag_of_Kurdistan.svg.png" alt="Kurdî" class="w-8 h-auto rounded-md">
-                <span class="font-medium">Kurdî (Kurmancî)</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="offcanvas-backdrop" class="fixed inset-0 bg-black/60 z-[99] hidden transition-opacity duration-300"></div>
-    <aside id="offcanvas-panel" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-slate-800 shadow-lg z-[100] transform transition-transform duration-300 ease-in-out translate-x-full p-5 flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="font-googlesans text-xl font-medium text-slate-900 dark:text-white" data-translate-key="about_project">Proje Hakkında</h3>
-            <button id="close-offcanvas-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-        <div class="overflow-y-auto space-y-3">
-            <p id="jettonDescription" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-                <span class="skeleton block w-full h-4 rounded-md"></span>
-                <span class="skeleton block w-5/6 h-4 rounded-md mt-2"></span>
-                <span class="skeleton block w-3/4 h-4 rounded-md mt-2"></span>
-            </p>
-        </div>
-    </aside>
-
-    <div id="app-container" class="max-w-4xl mx-auto bg-white dark:bg-[#202124] shadow-2xl shadow-slate-300/30 dark:shadow-black/20 min-h-screen flex flex-col">
-        <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-white/80 dark:bg-[#202124]/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700/50">
-            <div class="flex items-center gap-3">
-                <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-10 h-10 rounded-full">
-                <h1 class="text-xl font-bold font-googlesans text-slate-900 dark:text-white">Lira Kurdi</h1>
+<body class="min-h-screen">
+    
+    <header class="max-w-3xl mx-auto p-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+             <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-12 h-12 rounded-full shadow-lg">
+             <div>
+                <h1 class="text-xl font-bold tracking-tight">Lira Kurdi</h1>
+                <p class="hint-color font-mono text-xs">$LKURD</p>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="language-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                    <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">language</span>
-                </button>
-                <button id="info-btn" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                    <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">info</span>
-                </button>
-            </div>
-        </header>
+        </div>
+        <div id="language-switcher" class="flex items-center border border-zinc-200 dark:border-zinc-700 rounded-full p-0.5 text-xs font-bold">
+            <button data-lang="tr" class="lang-btn px-2.5 py-1 rounded-full transition-colors">TR</button>
+            <button data-lang="en" class="lang-btn px-2.5 py-1 rounded-full transition-colors">EN</button>
+            <button data-lang="ku" class="lang-btn px-2.5 py-1 rounded-full transition-colors">KU</button>
+        </div>
+    </header>
 
-        <main class="p-4 sm:p-6 flex-grow">
-            <section class="grid grid-cols-2 gap-3 mb-8">
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-green-500">monetization_on</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="price">Fiyat</span>
-                        <strong id="info-price" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-20 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-indigo-500">query_stats</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="market_cap">Piyasa Değeri</span>
-                        <strong id="info-market-cap" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-24 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-cyan-500">water_drop</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="liquidity">Likidite</span>
-                        <strong id="info-liquidity" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-20 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-blue-500">group</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="holders">Sahipler</span>
-                        <strong id="info-holders" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-16 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-                <div class="col-span-2 flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-orange-500">layers</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="total_supply">Toplam Arz</span>
-                        <strong id="info-total-supply" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-32 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-                <div id="info-contract-card" class="col-span-2 flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer">
-                     <span class="material-symbols-outlined text-purple-500">receipt_long</span>
-                    <div>
-                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="contract">Kontrat</span>
-                        <strong id="info-contract" class="block font-mono text-sm h-5"><span class="skeleton inline-block w-36 h-4 rounded"></span></strong>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="pools" class="mb-8">
-                 <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="pools_title">Likidite Havuzları</h3>
-                 <div id="liquidity-pools-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50">
-                        <div class="w-10 h-10 rounded-full skeleton"></div>
-                        <div class="flex-grow">
-                            <div class="w-24 h-4 mb-2 rounded skeleton"></div>
-                            <div class="w-32 h-3 rounded skeleton"></div>
-                        </div>
-                    </div>
-                     <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50">
-                        <div class="w-10 h-10 rounded-full skeleton"></div>
-                        <div class="flex-grow">
-                            <div class="w-24 h-4 mb-2 rounded skeleton"></div>
-                            <div class="w-32 h-3 rounded skeleton"></div>
-                        </div>
-                    </div>
-                 </div>
-            </section>
-
-            <section id="services" class="mb-8">
-                <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="services_title">Servisler</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="service-card" data-tg-link="https://t.me/LKURDMovieBot">
-                        <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
-                            <img src="https://placehold.co/48x48/E50914/FFFFFF?text=K" alt="Kmovie Logo" class="w-8 h-8 rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/48x48/CCCCCC/FFFFFF?text=M';">
-                        </div>
-                        <div class="text-left">
-                            <span class="font-medium font-googlesans text-lg">Kmovie</span>
-                            <p class="description" data-translate-key="service_movie_desc">Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.</p>
-                        </div>
-                        <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
-                    </div>
-                    <div class="service-card" data-tg-link="https://t.me/aaGameTONBot">
-                        <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
-                             <img src="images/aalogo.png" alt="aa Games Logo" class="w-8 h-8" onerror="this.onerror=null;this.src='https://placehold.co/48x48/4CAF50/FFFFFF?text=G';">
-                        </div>
-                        <div class="text-left">
-                            <span class="font-medium font-googlesans text-lg">aa Games</span>
-                            <p class="description" data-translate-key="service_game_desc">Efsane oyun "aa" ve daha fazlasını ücretsiz oyna.</p>
-                        </div>
-                        <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="community">
-                <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="community_title">Topluluk</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    <a class="community-card" data-tg-link="https://t.me/LiraKurdiChat"><i class="fab fa-telegram-plane text-[#2AABEE]"></i><span data-translate-key="community_chat">Sohbet</span></a>
-                    <a class="community-card" data-link="https://x.com/LiraKurdi"><i class="fab fa-twitter text-[#1DA1F2]"></i><span>X (Twitter)</span></a>
-                    <a class="community-card" data-link="https://www.instagram.com/lirakurdi/"><i class="fab fa-instagram text-[#C13584]"></i><span>Instagram</span></a>
-                    <a class="community-card" data-link="https://www.youtube.com/@LiraKurdi"><i class="fab fa-youtube text-[#FF0000]"></i><span>YouTube</span></a>
-                    <a class="community-card" data-link="https://www.facebook.com/LiraKurdiOfficial"><i class="fab fa-facebook text-[#1877F2]"></i><span>Facebook</span></a>
-                    <a class="community-card" data-link="https://www.tiktok.com/@lira.kurdi"><i class="fab fa-tiktok text-black dark:text-white"></i><span>TikTok</span></a>
-                    <a class="community-card" data-link="https://github.com/LiraKurdi/Lira-Kurdi"><i class="fab fa-github text-black dark:text-white"></i><span>GitHub</span></a>
-                    <a class="community-card" data-link="mailto:kurdishlira@gmail.com"><i class="material-symbols-outlined text-slate-500">mail</i><span data-translate-key="community_email">E-Posta</span></a>
-                </div>
-            </section>
-        </main>
+    <main class="max-w-3xl mx-auto p-4 space-y-6 pb-24">
         
-        <footer class="text-center p-6 mt-8 border-t border-slate-200 dark:border-slate-700/50">
-            <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Copyright powered by @LiraKurdi</p>
-        </footer>
-    </div>
+        <div class="card p-4 rounded-2xl shadow-sm">
+            <h2 class="font-bold text-lg mb-4" data-translate-key="core_info">Temel Bilgiler</h2>
+            <div class="space-y-4">
+                <div class="info-item"><label class="text-sm font-medium hint-color" data-translate-key="total_supply">Toplam Arz</label><strong id="data-total-supply" class="block text-lg font-mono truncate mt-1"><span class="skeleton w-48 h-7 inline-block"></span></strong></div>
+                <hr class="border-t" style="border-color: var(--border-color);" />
+                <div class="info-item"><label class="text-sm font-medium hint-color" data-translate-key="contract_address">Kontrat Adresi</label><p id="contract-address" class="font-mono text-sm break-all mt-1">EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap</p><div class="flex items-stretch gap-2 mt-3"><button data-clipboard-target="#contract-address" class="copy-btn w-full text-sm font-semibold rounded-lg py-2 border-2 btn-secondary transition-opacity hover:opacity-80" data-translate-key="copy">Kopyala</button><a href="#" id="contract-explorer-link" target="_blank" class="w-full text-sm font-semibold rounded-lg py-2 text-center btn-primary transition-opacity hover:opacity-90" data-translate-key="view_on_explorer">Görüntüle</a></div></div>
+                <hr class="border-t" style="border-color: var(--border-color);" />
+                <div class="info-item"><label class="text-sm font-medium hint-color" data-translate-key="owner_address">Sahip Adresi</label><p id="owner-address" class="font-mono text-sm break-all mt-1">UQB2hUHdOFJHUwZRYsKRBO4kJeufMHbmaBC1WOPIkxRPIOcC</p><div class="flex items-stretch gap-2 mt-3"><button data-clipboard-target="#owner-address" class="copy-btn w-full text-sm font-semibold rounded-lg py-2 border-2 btn-secondary transition-opacity hover:opacity-80" data-translate-key="copy">Kopyala</button><a href="#" id="owner-explorer-link" target="_blank" class="w-full text-sm font-semibold rounded-lg py-2 text-center btn-primary transition-opacity hover:opacity-90" data-translate-key="view_on_explorer">Görüntüle</a></div></div>
+            </div>
+        </div>
+
+        <div class="card p-4 rounded-2xl shadow-sm">
+            <h2 class="font-bold text-lg" data-translate-key="project_wallets">Proje Cüzdanları</h2>
+            <div id="wallets-container" class="mt-4 space-y-2"></div>
+        </div>
+
+        <div id="community-collapsible" class="collapsible card rounded-2xl shadow-sm">
+            <button id="community-toggle" class="w-full flex items-center justify-between p-4">
+                <h2 class="font-bold text-lg" data-translate-key="community_contact">Topluluk & İletişim</h2>
+                <span class="material-symbols-outlined chevron-icon">expand_more</span>
+            </button>
+            <div class="collapsible-content">
+                <div id="community-container" class="collapsible-inner grid grid-cols-1 sm:grid-cols-2 gap-2 px-4 pb-4"></div>
+            </div>
+        </div>
+
+    </main>
 
     <script type="module">
-        // --- Sabitler ve Ayarlar ---
+        // --- CONFIG ---
         const JETTON_ADDRESS = 'EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap';
-        const STYLES = {
-            serviceCard: 'flex items-center justify-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 text-left cursor-pointer transition-all duration-300 hover:shadow-lg hover:dark:bg-slate-700/50 hover:-translate-y-1',
-            serviceDesc: 'text-sm text-slate-500 dark:text-slate-400 mt-0.5',
-            arrowIcon: 'ml-auto text-slate-400 dark:text-slate-500 text-base',
-            communityCard: 'flex flex-col items-center justify-center gap-2 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 cursor-pointer transition-all duration-200 hover:shadow-md hover:dark:bg-slate-700/50 text-center',
-            communityIcon: 'text-2xl',
-            communityText: 'text-sm font-medium text-slate-700 dark:text-slate-200',
+        const OWNER_ADDRESS = 'UQB2hUHdOFJHUwZRYsKRBO4kJeufMHbmaBC1WOPIkxRPIOcC';
+        const WALLET_ICONS = {
+            BTC: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-orange-400"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM9.515 11.622c.384-.928.913-1.573 1.588-1.954a.823.823 0 011.026.284.823.823 0 01-.284 1.026c-.498.287-.852.755-1.118 1.348-.266.593-.38 1.23-.38 1.884s.114 1.291.38 1.884c.266.593.62 1.061 1.118 1.348a.823.823 0 01.284 1.026.823.823 0 01-1.026.284c-.675-.38-1.204-1.026-1.588-1.954V15.5a.825.825 0 01-1.65 0v-1.125h-.938a.825.825 0 010-1.65h.938V11.6c0-.534 0-1.067.015-1.595a.825.825 0 011.65 0v1.617zM14.485 12.377c-.384.928-.913 1.573-1.588 1.954a.823.823 0 01-1.026-.284.823.823 0 01.284-1.026c.498-.287.852-.755 1.118-1.348.266-.593.38-1.23.38-1.884s-.114-1.291-.38-1.884c-.266-.593-.62-1.061-1.118-1.348a.823.823 0 01-.284-1.026.823.823 0 011.026-.284c.675.38 1.204 1.026 1.588 1.954V8.5a.825.825 0 011.65 0v1.125h.938a.825.825 0 010 1.65h-.938v1.125c0 .534 0 1.067-.015 1.595a.825.825 0 01-1.65 0v-1.618z" clip-rule="evenodd"></path></svg>`,
+            ETH: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-gray-400"><path d="M1.5 12.563v-1.125a11.25 11.25 0 0111.25-11.25 11.25 11.25 0 0111.25 11.25v1.125c0 5.59-3.926 10.27-9.286 11.085a.75.75 0 01-.828-.622 9.75 9.75 0 00-1.922 0 .75.75 0 01-.828.622C5.426 22.833 1.5 18.153 1.5 12.563zM12 12.375L8.25 10.5l3.75-7.125 3.75 7.125L12 12.375zM12 13.5l3.75 1.875-3.75 5.25-3.75-5.25L12 13.5z"></path></svg>`,
+            SOL: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8" style="color: #9945FF;"><path d="M4.75 18.5a.75.75 0 00.75.75h12.5a.75.75 0 000-1.5H5.5a.75.75 0 00-.75.75zM4.75 12a.75.75 0 00.75.75h12.5a.75.75 0 000-1.5H5.5a.75.75 0 00-.75.75zM4.75 5.5a.75.75 0 00.75.75h12.5a.75.75 0 000-1.5H5.5a.75.75 0 00-.75.75z"></path></svg>`,
+            TRX: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-red-500"><path d="M12.375 2.25a10.125 10.125 0 1010.125 10.125A10.137 10.137 0 0012.375 2.25zm4.01 9.943l-4.01 2.316v6.946l4.01-2.316v-6.946zm-8.019 0l4.01 2.316v6.946l-4.01-2.316v-6.946zm4.01-7.79l4.01 2.316-4.01 2.316-4.01-2.316 4.01-2.316z"></path></svg>`
         };
-
-        // --- DOM Elementleri ---
-        const elements = {
-            splashScreen: document.getElementById('splash-screen'),
-            infoBtn: document.getElementById('info-btn'),
-            languageBtn: document.getElementById('language-btn'),
-            offcanvasPanel: document.getElementById('offcanvas-panel'),
-            offcanvasBackdrop: document.getElementById('offcanvas-backdrop'),
-            closeOffcanvasBtn: document.getElementById('close-offcanvas-btn'),
-            languageModal: document.getElementById('language-modal'),
-            languageModalBackdrop: document.getElementById('language-modal-backdrop'),
-            langOptions: document.querySelectorAll('.lang-option'),
-            clickableCards: document.querySelectorAll('[data-link], [data-tg-link]'),
-            jettonDescription: document.getElementById('jettonDescription'),
-            // Hızlı Bilgi Kartları
-            price: document.getElementById('info-price'),
-            marketCap: document.getElementById('info-market-cap'),
-            liquidity: document.getElementById('info-liquidity'),
-            holders: document.getElementById('info-holders'),
-            totalSupply: document.getElementById('info-total-supply'),
-            contract: document.getElementById('info-contract'),
-            contractCard: document.getElementById('info-contract-card'),
-            // Havuzlar
-            poolsContainer: document.getElementById('liquidity-pools-container'),
-        };
-
-        // --- Çeviriler ---
-        const translations = {
-            en: {
-                services_title: "Services", community_title: "Community", about_project: "About Project",
-                contract: "Contract", total_supply: "Total Supply", holders: "Holders",
-                select_language: "Select Language", community_chat: "Chat", community_email: "E-Mail",
-                service_movie_desc: "Free online Telegram Digital Content Platform. Like Netflix.",
-                service_game_desc: "Play the legendary game 'aa' and more for free.",
-                price: "Price", market_cap: "Market Cap", liquidity: "Liquidity", pools_title: "Liquidity Pools"
-            },
+        const PROJECT_WALLETS = [
+            { network: 'Bitcoin', symbol: 'BTC', address: '127w5aoZtVD7M3LRrxJkC6zNjk2UF6QxKu' },
+            { network: 'Ethereum', symbol: 'ETH', address: '0x5b29C538c29A88190F4AEEd479A6D91179dea808' },
+            { network: 'Solana', symbol: 'SOL', address: '8Qt3hC52dZBtVyq8eK2Ncn1D2DrKgCjLZC8piRs6gGoA' },
+            { network: 'Tron', symbol: 'TRX', address: 'TBQks6yLwX94YY2MdsVr6Y2gSrPeegFZBW' }
+        ];
+        const COMMUNITY_LINKS = [
+            { key: "community_telegram", icon: "fa-telegram", url: "https://t.me/LiraKurdiChat" },
+            { key: "community_twitter", icon: "fa-twitter", url: "https://x.com/LiraKurdi" },
+            { key: "community_instagram", icon: "fa-instagram", url: "https://www.instagram.com/lirakurdi/" },
+            { key: "community_youtube", icon: "fa-youtube", url: "https://www.youtube.com/@LiraKurdi" },
+            { key: "community_facebook", icon: "fa-facebook", url: "https://www.facebook.com/LiraKurdiOfficial" },
+            { key: "community_tiktok", icon: "fa-tiktok", url: "https://www.tiktok.com/@lira.kurdi" },
+            { key: "community_github", icon: "fa-github", url: "https://github.com/LiraKurdi/Lira-Kurdi" },
+            { key: "community_email", icon: "fa-envelope", url: "mailto:kurdishlira@gmail.com" }
+        ];
+        const TRANSLATIONS = {
             tr: {
-                services_title: "Servisler", community_title: "Topluluk", about_project: "Proje Hakkında",
-                contract: "Kontrat", total_supply: "Toplam Arz", holders: "Sahipler",
-                select_language: "Dil Seçin", community_chat: "Sohbet", community_email: "E-Posta",
-                service_movie_desc: "Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.",
-                service_game_desc: "Efsane oyun 'aa' ve daha fazlasını ücretsiz oyna.",
-                price: "Fiyat", market_cap: "Piyasa Değeri", liquidity: "Likidite", pools_title: "Likidite Havuzları"
+                core_info: "Temel Bilgiler", total_supply: "Toplam Arz", contract_address: "Kontrat Adresi", owner_address: "Sahip Adresi",
+                copy: "Kopyala", copied: "Kopyalandı!", view_on_explorer: "Görüntüle", project_wallets: "Proje Cüzdanları",
+                community_contact: "Topluluk & İletişim", community_telegram: "Telegram Sohbet", community_twitter: "X (Twitter)",
+                community_instagram: "Instagram", community_youtube: "YouTube", community_facebook: "Facebook", community_tiktok: "TikTok",
+                community_github: "GitHub", community_email: "E-Posta"
+            },
+            en: {
+                core_info: "Core Information", total_supply: "Total Supply", contract_address: "Contract Address", owner_address: "Owner Address",
+                copy: "Copy", copied: "Copied!", view_on_explorer: "View", project_wallets: "Project Wallets",
+                community_contact: "Community & Contact", community_telegram: "Telegram Chat", community_twitter: "X (Twitter)",
+                community_instagram: "Instagram", community_youtube: "YouTube", community_facebook: "Facebook", community_tiktok: "TikTok",
+                community_github: "GitHub", community_email: "E-Mail"
             },
             ku: {
-                services_title: "Xizmet", community_title: "Civat", about_project: "Derbarê Projeyê",
-                contract: "Peyman", total_supply: "Tevahî Pêşkêşî", holders: "Xwedî",
-                select_language: "Ziman Hilbijêre", community_chat: "Sohbet", community_email: "E-name",
-                service_movie_desc: "Platforma Naveroka Dîjîtal a Telegramê ya serhêl a belaş. Mîna Netflix.",
-                service_game_desc: "Lîstika efsanewî 'aa' û bêtir belaş bilîzin.",
-                price: "Biha", market_cap: "Nirxa Bazarê", liquidity: "Lîkîdîte", pools_title: "Hezên Lîkîdîteyê"
+                core_info: "Agahiyên Bingehîn", total_supply: "Tevahî Pêşkêşî", contract_address: "Navnîşana Peymanê", owner_address: "Navnîşana Xwedî",
+                copy: "Kopîkirin", copied: "Hate Kopîkirin!", view_on_explorer: "Bibîne", project_wallets: "Berîkên Projeyê",
+                community_contact: "Civak & Têkilî", community_telegram: "Sohbeta Telegram", community_twitter: "X (Twitter)",
+                community_instagram: "Instagram", community_youtube: "YouTube", community_facebook: "Facebook", community_tiktok: "TikTok",
+                community_github: "GitHub", community_email: "E-name"
             }
+        };
+
+        const tg = window.Telegram?.WebApp || {
+            ready: () => {}, expand: () => {}, onEvent: () => {},
+            colorScheme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+            initDataUnsafe: { user: { language_code: 'tr' } },
+            HapticFeedback: { notificationOccurred: () => {}, impactOccurred: () => {} }
         };
         
-        // --- Yardımcı Fonksiyonlar ---
-        const applyStyles = (selector, styles) => {
-            document.querySelectorAll(selector).forEach(el => el.classList.add(...styles.split(' ')));
-        };
-
-        const formatNumber = (num) => {
-            if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
-            if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
-            return num.toString();
-        };
-        
-        // --- API Çağrıları ---
-        const fetchData = async (url) => {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`API Error: ${response.status} at ${url}`);
-            return response.json();
-        };
-
-        const fetchTokenData = () => fetchData(`https://tonapi.io/v2/jettons/${JETTON_ADDRESS}`);
-        const fetchPriceData = () => fetchData(`https://tonapi.io/v2/rates?tokens=${JETTON_ADDRESS}&currencies=usd`);
-        const fetchPoolsData = () => fetchData(`https://tonapi.io/v2/jettons/${JETTON_ADDRESS}/pools`);
-
-        // --- UI Güncelleme Fonksiyonları ---
-        const updateTokenInfoUI = (data) => {
-            const { metadata, holders_count, total_supply } = data;
-            elements.jettonDescription.innerHTML = (metadata?.description || '').replace(/\n/g, '<br>');
-            elements.jettonDescription.classList.remove('skeleton');
-            elements.holders.textContent = parseInt(holders_count || 0).toLocaleString('en-US');
-            
-            if (total_supply && metadata?.decimals) {
-                const supply = (BigInt(total_supply) / BigInt(10 ** metadata.decimals)).toString();
-                elements.totalSupply.textContent = `${parseInt(supply).toLocaleString('en-US')} ${metadata.symbol}`;
-            } else {
-                elements.totalSupply.textContent = '---';
-            }
-            if (metadata?.address) {
-                const address = metadata.address;
-                elements.contract.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-            }
-        };
-
-        const updatePriceUI = (priceData, tokenData) => {
-            const price = priceData.rates?.[JETTON_ADDRESS]?.prices?.USD;
-            if (price) {
-                elements.price.textContent = `$${price.toPrecision(4)}`;
-                
-                const { total_supply } = tokenData;
-                const { decimals } = tokenData.metadata;
-                if (total_supply && decimals) {
-                    const supply = Number(BigInt(total_supply) / BigInt(10 ** decimals));
-                    const marketCap = supply * price;
-                    elements.marketCap.textContent = `$${formatNumber(marketCap)}`;
-                } else {
-                    elements.marketCap.textContent = '---';
-                }
-            } else {
-                elements.price.textContent = 'N/A';
-                elements.marketCap.textContent = 'N/A';
-            }
-        };
-
-        const updatePoolsUI = (poolsData) => {
-            let totalLiquidity = 0;
-            elements.poolsContainer.innerHTML = ''; // Clear skeleton
-
-            if (poolsData.pools && poolsData.pools.length > 0) {
-                poolsData.pools.forEach(pool => {
-                    totalLiquidity += pool.total_liquidity_usd;
-                    
-                    const poolCard = document.createElement('a');
-                    poolCard.href = pool.main_page;
-                    poolCard.target = '_blank';
-                    poolCard.className = 'flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:dark:bg-slate-700/50 hover:-translate-y-1';
-                    
-                    const dexLogo = {
-                        'ston.fi': 'https://s3.tradingview.com/userpics/6265775-v5o5_orig.png',
-                        'dedust': 'https://dedust.io/logo_black.svg'
-                    }[pool.dex] || `https://placehold.co/40x40/cccccc/ffffff?text=${pool.dex.charAt(0).toUpperCase()}`;
-                    
-                    poolCard.innerHTML = `
-                        <img src="${dexLogo}" alt="${pool.dex}" class="w-10 h-10 rounded-full bg-white p-1">
-                        <div class="flex-grow">
-                            <div class="font-medium text-slate-800 dark:text-slate-200">${pool.dex}</div>
-                            <div class="text-xs text-slate-500 dark:text-slate-400">
-                                ${pool.assets.map(a => a.metadata.symbol).join('/')}
-                                <span class="font-bold text-green-600 dark:text-green-500 ml-2">$${formatNumber(pool.total_liquidity_usd)}</span>
-                            </div>
-                        </div>
-                        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-base ml-auto">open_in_new</span>
-                    `;
-                    elements.poolsContainer.appendChild(poolCard);
-                });
-            } else {
-                elements.poolsContainer.innerHTML = `<p class="text-sm text-slate-500 dark:text-slate-400 col-span-full text-center">No active liquidity pools found.</p>`;
-            }
-            
-            elements.liquidity.textContent = `$${formatNumber(totalLiquidity)}`;
-        };
-
-        // --- Olay Dinleyicileri ve Başlatma ---
-        const setupEventListeners = () => {
-            const tg = window.Telegram.WebApp;
-            elements.clickableCards.forEach(card => {
-                card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    tg.HapticFeedback.impactOccurred('light');
-                    const link = card.dataset.link || card.dataset.tgLink;
-                    if (card.dataset.link) tg.openLink(link);
-                    if (card.dataset.tgLink) tg.openTelegramLink(link);
-                });
-            });
-            
-            elements.contractCard.addEventListener('click', () => {
-                tg.HapticFeedback.impactOccurred('light');
-                tg.openLink(`https://tonviewer.com/${JETTON_ADDRESS}`);
-            });
-
-            const toggleOffcanvas = () => {
-                elements.offcanvasPanel.classList.toggle('translate-x-full');
-                elements.offcanvasBackdrop.classList.toggle('hidden');
-            };
-            elements.infoBtn.addEventListener('click', toggleOffcanvas);
-            elements.closeOffcanvasBtn.addEventListener('click', toggleOffcanvas);
-            elements.offcanvasBackdrop.addEventListener('click', toggleOffcanvas);
-
-            const toggleLanguageModal = () => {
-                elements.languageModal.classList.toggle('translate-y-full');
-                elements.languageModalBackdrop.classList.toggle('hidden');
-            };
-            elements.languageBtn.addEventListener('click', toggleLanguageModal);
-            elements.languageModalBackdrop.addEventListener('click', toggleLanguageModal);
-            elements.langOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    setLanguage(option.dataset.lang);
-                    toggleLanguageModal();
-                });
-            });
-        };
-
-        const setLanguage = (lang) => {
+        function setLanguage(lang) {
+            const translations = TRANSLATIONS[lang] || TRANSLATIONS.tr;
             document.documentElement.lang = lang;
-            const langStrings = translations[lang];
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
-                if (langStrings[key]) {
-                    el.textContent = langStrings[key];
+                if (translations[key]) {
+                    el.textContent = translations[key];
                 }
             });
-            localStorage.setItem('appLanguage', lang);
-        };
+            document.querySelectorAll('#language-switcher .lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            localStorage.setItem('userLanguage', lang);
+        }
+
+        function renderWallets() {
+            const container = document.getElementById('wallets-container');
+            container.innerHTML = PROJECT_WALLETS.map(wallet => `
+                <div data-clipboard-text="${wallet.address}" class="copy-trigger p-3 rounded-xl flex items-center justify-between gap-2 transition-all duration-200 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="flex-shrink-0 w-10 h-10 flex items-center justify-center">${WALLET_ICONS[wallet.symbol] || ''}</div>
+                        <div class="min-w-0">
+                            <p class="font-semibold text-sm">${wallet.network}</p>
+                            <p class="font-mono text-xs hint-color truncate">${wallet.address}</p>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 p-2 rounded-lg">
+                        <span class="material-symbols-outlined hint-color">content_copy</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCommunityLinks() {
+            const container = document.getElementById('community-container');
+            container.innerHTML = COMMUNITY_LINKS.map(link => `
+                <a href="${link.url}" target="_blank" class="flex items-center gap-3 p-3 rounded-lg text-sm font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                    <i class="fab ${link.icon} w-5 text-center text-lg hint-color"></i>
+                    <span data-translate-key="${link.key}"></span>
+                </a>
+            `).join('');
+        }
+
+        async function fetchAndUpdateSupply() {
+            const totalSupplyEl = document.getElementById('data-total-supply');
+            try {
+                const response = await fetch(`https://tonapi.io/v2/jettons/${JETTON_ADDRESS}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                const supply = (BigInt(data.total_supply) / BigInt(10 ** data.metadata.decimals)).toString();
+                const formattedSupply = parseInt(supply).toLocaleString('en-US');
+                totalSupplyEl.textContent = `${formattedSupply} ${data.metadata.symbol}`;
+            } catch (error) {
+                console.error("Failed to fetch total supply:", error);
+                totalSupplyEl.textContent = 'Veri alınamadı';
+            }
+        }
+
+        function setupCopyListeners() {
+            document.body.addEventListener('click', (e) => {
+                const trigger = e.target.closest('.copy-btn, .copy-trigger');
+                if (!trigger) return;
+                
+                tg.HapticFeedback.notificationOccurred('success');
+
+                const currentLang = localStorage.getItem('userLanguage') || 'tr';
+                let textToCopy = '';
+
+                const targetSelector = trigger.dataset.clipboardTarget;
+                if (targetSelector) {
+                    textToCopy = document.querySelector(targetSelector)?.textContent || '';
+                } else {
+                    textToCopy = trigger.dataset.clipboardText || '';
+                }
+                
+                if(!textToCopy) return;
+
+                navigator.clipboard.writeText(textToCopy);
+
+                if (trigger.classList.contains('copy-btn')) {
+                    const originalText = TRANSLATIONS[currentLang].copy;
+                    const successText = TRANSLATIONS[currentLang].copied;
+                    trigger.textContent = successText;
+                    setTimeout(() => {
+                        trigger.textContent = originalText;
+                    }, 2000);
+                }
+            });
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
-            const tg = window.Telegram.WebApp;
-            try {
-                tg.ready();
-                tg.expand();
-            } catch (e) { console.warn("Telegram WebApp is not available."); }
-
-            applyStyles('.service-card', STYLES.serviceCard);
-            applyStyles('.service-card .description', STYLES.serviceDesc);
-            applyStyles('.service-card .arrow-icon', STYLES.arrowIcon);
-            applyStyles('.community-card', STYLES.communityCard);
-            applyStyles('.community-card i, .community-card .material-symbols-outlined', STYLES.communityIcon);
-            applyStyles('.community-card span', STYLES.communityText);
-
-            const init = async () => {
-                const savedLang = localStorage.getItem('appLanguage') || 'tr';
-                setLanguage(savedLang);
-                setupEventListeners();
-
-                try {
-                    const [tokenData, priceData, poolsData] = await Promise.all([
-                        fetchTokenData(),
-                        fetchPriceData(),
-                        fetchPoolsData()
-                    ]);
-                    
-                    if (tokenData) {
-                        updateTokenInfoUI(tokenData);
-                        if (priceData) updatePriceUI(priceData, tokenData);
-                    }
-                    if (poolsData) updatePoolsUI(poolsData);
-
-                } catch (error) {
-                    console.error('Failed to fetch initial data:', error);
-                    // Handle critical fetch error if needed
-                }
-
-                setTimeout(() => {
-                    elements.splashScreen.classList.add('opacity-0');
-                    setTimeout(() => elements.splashScreen.style.display = 'none', 500);
-                }, 1000);
+            tg.ready(); tg.expand();
+            
+            const applyTheme = () => {
+                const theme = tg.colorScheme === 'dark' ? 'dark' : 'light';
+                document.documentElement.className = theme;
+                document.documentElement.style.setProperty('--primary-color', tg.themeParams.button_color || (theme === 'dark' ? '#3b82f6' : '#2563eb'));
+                document.documentElement.style.setProperty('--primary-text-color', tg.themeParams.button_text_color || '#ffffff');
             };
+            applyTheme();
+            tg.onEvent('themeChanged', applyTheme);
 
-            init();
+            document.getElementById('contract-explorer-link').href = `https://tonviewer.com/${JETTON_ADDRESS}`;
+            document.getElementById('owner-explorer-link').href = `https://tonviewer.com/${OWNER_ADDRESS}`;
+            
+            renderWallets();
+            renderCommunityLinks();
+
+            const savedLang = localStorage.getItem('userLanguage');
+            const userLang = (tg.initDataUnsafe.user?.language_code || 'tr').split('-')[0];
+            const initialLang = savedLang || (TRANSLATIONS[userLang] ? userLang : 'tr');
+            setLanguage(initialLang);
+
+            document.querySelectorAll('#language-switcher .lang-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    tg.HapticFeedback.impactOccurred('light');
+                    setLanguage(e.currentTarget.dataset.lang);
+                });
+            });
+
+            const communityCollapsible = document.getElementById('community-collapsible');
+            const communityToggle = document.getElementById('community-toggle');
+            communityToggle.addEventListener('click', () => {
+                tg.HapticFeedback.impactOccurred('light');
+                communityCollapsible.classList.toggle('open');
+            });
+
+            setupCopyListeners();
+            fetchAndUpdateSupply();
         });
     </script>
 </body>
