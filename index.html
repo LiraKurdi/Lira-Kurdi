@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=no">
     <title>Lira Kurdi Merkezi</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-    <!-- Font Awesome (Topluluk ikonları için) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Telegram Web App Script -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
@@ -58,13 +54,11 @@
 </head>
 <body class="text-slate-800 dark:text-slate-200 overflow-x-hidden">
 
-    <!-- Yükleme Ekranı (Intro) -->
     <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-white dark:bg-[#202124] transition-opacity duration-500 ease-out">
         <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-24 h-24 rounded-full shadow-lg">
         <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full spinner"></div>
     </div>
 
-    <!-- Dil Seçim Modalı -->
     <div id="language-modal-backdrop" class="fixed inset-0 bg-black/60 z-[101] hidden transition-opacity duration-300"></div>
     <div id="language-modal" class="fixed bottom-0 left-0 right-0 z-[102] bg-white dark:bg-slate-800 rounded-t-3xl p-5 transform transition-transform duration-300 ease-in-out translate-y-full">
         <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4"></div>
@@ -85,7 +79,6 @@
         </div>
     </div>
 
-    <!-- Off-canvas Panel (Proje Hakkında) -->
     <div id="offcanvas-backdrop" class="fixed inset-0 bg-black/60 z-[99] hidden transition-opacity duration-300"></div>
     <aside id="offcanvas-panel" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-white dark:bg-slate-800 shadow-lg z-[100] transform transition-transform duration-300 ease-in-out translate-x-full p-5 flex flex-col">
         <div class="flex items-center justify-between mb-4">
@@ -104,7 +97,6 @@
     </aside>
 
     <div id="app-container" class="max-w-4xl mx-auto bg-white dark:bg-[#202124] shadow-2xl shadow-slate-300/30 dark:shadow-black/20 min-h-screen flex flex-col">
-        <!-- Üst Bar (App Header) -->
         <header class="sticky top-0 z-50 flex items-center justify-between p-4 bg-white/80 dark:bg-[#202124]/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700/50">
             <div class="flex items-center gap-3">
                 <img src="https://storage.dyor.io/jettons/images/1741602289/05822800.jpeg" alt="Lira Kurdi Logo" class="w-10 h-10 rounded-full">
@@ -120,49 +112,75 @@
             </div>
         </header>
 
-        <!-- Ana İçerik -->
         <main class="p-4 sm:p-6 flex-grow">
-            <!-- Karşılama Mesajı ve Kullanıcı Giriş Alanı -->
-            <div class="bg-blue-50 dark:bg-blue-900/30 p-5 rounded-2xl mb-6 border border-blue-200 dark:border-blue-800/50">
-                <h2 id="welcome-message" class="font-googlesans text-xl font-medium text-slate-900 dark:text-white mb-3"></h2>
-                <div class="relative">
-                    <input type="text" id="username-input" class="w-full p-3 pl-4 pr-12 text-sm bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-full focus:ring-2 focus:ring-blue-500 focus:outline-none transition-shadow" data-translate-key="username_placeholder" data-translate-type="placeholder">
-                    <button id="save-username-btn" class="absolute inset-y-0 right-0 flex items-center justify-center w-10 h-10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 rounded-full transition-colors m-1.5">
-                        <span class="material-symbols-outlined">arrow_forward</span>
-                    </button>
+            <section class="grid grid-cols-2 gap-3 mb-8">
+                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                    <span class="material-symbols-outlined text-green-500">monetization_on</span>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="price">Fiyat</span>
+                        <strong id="info-price" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-20 h-4 rounded"></span></strong>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Hızlı Bilgiler -->
-            <section class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                    <span class="material-symbols-outlined text-indigo-500">query_stats</span>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="market_cap">Piyasa Değeri</span>
+                        <strong id="info-market-cap" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-24 h-4 rounded"></span></strong>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                    <span class="material-symbols-outlined text-cyan-500">water_drop</span>
+                    <div>
+                        <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="liquidity">Likidite</span>
+                        <strong id="info-liquidity" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-20 h-4 rounded"></span></strong>
+                    </div>
+                </div>
                 <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
                     <span class="material-symbols-outlined text-blue-500">group</span>
                     <div>
                         <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="holders">Sahipler</span>
-                        <strong id="top-holder-count" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-16 h-4 rounded"></span></strong>
+                        <strong id="info-holders" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-16 h-4 rounded"></span></strong>
                     </div>
                 </div>
-                <div class="flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
-                    <span class="material-symbols-outlined text-green-500">layers</span>
+                <div class="col-span-2 flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800">
+                    <span class="material-symbols-outlined text-orange-500">layers</span>
                     <div>
                         <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="total_supply">Toplam Arz</span>
-                        <strong id="top-total-supply" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-24 h-4 rounded"></span></strong>
+                        <strong id="info-total-supply" class="block font-medium text-sm h-5"><span class="skeleton inline-block w-32 h-4 rounded"></span></strong>
                     </div>
                 </div>
-                <div id="top-contract-card" class="col-span-2 md:col-span-1 flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer">
+                <div id="info-contract-card" class="col-span-2 flex items-center gap-3 p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer">
                      <span class="material-symbols-outlined text-purple-500">receipt_long</span>
                     <div>
                         <span class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="contract">Kontrat</span>
-                        <strong id="top-contract" class="block font-mono text-sm h-5"><span class="skeleton inline-block w-28 h-4 rounded"></span></strong>
+                        <strong id="info-contract" class="block font-mono text-sm h-5"><span class="skeleton inline-block w-36 h-4 rounded"></span></strong>
                     </div>
                 </div>
             </section>
+            
+            <section id="pools" class="mb-8">
+                 <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="pools_title">Likidite Havuzları</h3>
+                 <div id="liquidity-pools-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <div class="w-10 h-10 rounded-full skeleton"></div>
+                        <div class="flex-grow">
+                            <div class="w-24 h-4 mb-2 rounded skeleton"></div>
+                            <div class="w-32 h-3 rounded skeleton"></div>
+                        </div>
+                    </div>
+                     <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <div class="w-10 h-10 rounded-full skeleton"></div>
+                        <div class="flex-grow">
+                            <div class="w-24 h-4 mb-2 rounded skeleton"></div>
+                            <div class="w-32 h-3 rounded skeleton"></div>
+                        </div>
+                    </div>
+                 </div>
+            </section>
 
-            <!-- Servisler -->
             <section id="services" class="mb-8">
                 <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="services_title">Servisler</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Kmovie Card -->
                     <div class="service-card" data-tg-link="https://t.me/LKURDMovieBot">
                         <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/50 flex items-center justify-center">
                             <img src="https://placehold.co/48x48/E50914/FFFFFF?text=K" alt="Kmovie Logo" class="w-8 h-8 rounded-md" onerror="this.onerror=null;this.src='https://placehold.co/48x48/CCCCCC/FFFFFF?text=M';">
@@ -173,7 +191,6 @@
                         </div>
                         <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
                     </div>
-                    <!-- aa Games Card -->
                     <div class="service-card" data-tg-link="https://t.me/aaGameTONBot">
                         <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
                              <img src="images/aalogo.png" alt="aa Games Logo" class="w-8 h-8" onerror="this.onerror=null;this.src='https://placehold.co/48x48/4CAF50/FFFFFF?text=G';">
@@ -187,7 +204,6 @@
                 </div>
             </section>
             
-            <!-- Topluluk -->
             <section id="community">
                 <h3 class="font-googlesans text-xl font-medium mb-4 px-1 text-slate-800 dark:text-slate-200" data-translate-key="community_title">Topluluk</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -203,17 +219,14 @@
             </section>
         </main>
         
-        <!-- Footer -->
         <footer class="text-center p-6 mt-8 border-t border-slate-200 dark:border-slate-700/50">
             <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Copyright powered by @LiraKurdi</p>
         </footer>
     </div>
 
-    <!-- Toast Bildirimi -->
-    <div id="toastNotification" class="fixed bottom-5 left-1/2 -translate-x-1/2 translate-y-20 bg-slate-900 text-white text-sm py-3 px-5 rounded-full shadow-lg opacity-0 transition-all duration-300 pointer-events-none"></div>
-    
     <script type="module">
-        // --- Stil Tanımlamaları ---
+        // --- Sabitler ve Ayarlar ---
+        const JETTON_ADDRESS = 'EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap';
         const STYLES = {
             serviceCard: 'flex items-center justify-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 text-left cursor-pointer transition-all duration-300 hover:shadow-lg hover:dark:bg-slate-700/50 hover:-translate-y-1',
             serviceDesc: 'text-sm text-slate-500 dark:text-slate-400 mt-0.5',
@@ -223,21 +236,217 @@
             communityText: 'text-sm font-medium text-slate-700 dark:text-slate-200',
         };
 
-        // --- Yardımcı Fonksiyon ---
+        // --- DOM Elementleri ---
+        const elements = {
+            splashScreen: document.getElementById('splash-screen'),
+            infoBtn: document.getElementById('info-btn'),
+            languageBtn: document.getElementById('language-btn'),
+            offcanvasPanel: document.getElementById('offcanvas-panel'),
+            offcanvasBackdrop: document.getElementById('offcanvas-backdrop'),
+            closeOffcanvasBtn: document.getElementById('close-offcanvas-btn'),
+            languageModal: document.getElementById('language-modal'),
+            languageModalBackdrop: document.getElementById('language-modal-backdrop'),
+            langOptions: document.querySelectorAll('.lang-option'),
+            clickableCards: document.querySelectorAll('[data-link], [data-tg-link]'),
+            jettonDescription: document.getElementById('jettonDescription'),
+            // Hızlı Bilgi Kartları
+            price: document.getElementById('info-price'),
+            marketCap: document.getElementById('info-market-cap'),
+            liquidity: document.getElementById('info-liquidity'),
+            holders: document.getElementById('info-holders'),
+            totalSupply: document.getElementById('info-total-supply'),
+            contract: document.getElementById('info-contract'),
+            contractCard: document.getElementById('info-contract-card'),
+            // Havuzlar
+            poolsContainer: document.getElementById('liquidity-pools-container'),
+        };
+
+        // --- Çeviriler ---
+        const translations = {
+            en: {
+                services_title: "Services", community_title: "Community", about_project: "About Project",
+                contract: "Contract", total_supply: "Total Supply", holders: "Holders",
+                select_language: "Select Language", community_chat: "Chat", community_email: "E-Mail",
+                service_movie_desc: "Free online Telegram Digital Content Platform. Like Netflix.",
+                service_game_desc: "Play the legendary game 'aa' and more for free.",
+                price: "Price", market_cap: "Market Cap", liquidity: "Liquidity", pools_title: "Liquidity Pools"
+            },
+            tr: {
+                services_title: "Servisler", community_title: "Topluluk", about_project: "Proje Hakkında",
+                contract: "Kontrat", total_supply: "Toplam Arz", holders: "Sahipler",
+                select_language: "Dil Seçin", community_chat: "Sohbet", community_email: "E-Posta",
+                service_movie_desc: "Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.",
+                service_game_desc: "Efsane oyun 'aa' ve daha fazlasını ücretsiz oyna.",
+                price: "Fiyat", market_cap: "Piyasa Değeri", liquidity: "Likidite", pools_title: "Likidite Havuzları"
+            },
+            ku: {
+                services_title: "Xizmet", community_title: "Civat", about_project: "Derbarê Projeyê",
+                contract: "Peyman", total_supply: "Tevahî Pêşkêşî", holders: "Xwedî",
+                select_language: "Ziman Hilbijêre", community_chat: "Sohbet", community_email: "E-name",
+                service_movie_desc: "Platforma Naveroka Dîjîtal a Telegramê ya serhêl a belaş. Mîna Netflix.",
+                service_game_desc: "Lîstika efsanewî 'aa' û bêtir belaş bilîzin.",
+                price: "Biha", market_cap: "Nirxa Bazarê", liquidity: "Lîkîdîte", pools_title: "Hezên Lîkîdîteyê"
+            }
+        };
+        
+        // --- Yardımcı Fonksiyonlar ---
         const applyStyles = (selector, styles) => {
             document.querySelectorAll(selector).forEach(el => el.classList.add(...styles.split(' ')));
         };
 
+        const formatNumber = (num) => {
+            if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(2)}M`;
+            if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+            return num.toString();
+        };
+        
+        // --- API Çağrıları ---
+        const fetchData = async (url) => {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`API Error: ${response.status} at ${url}`);
+            return response.json();
+        };
+
+        const fetchTokenData = () => fetchData(`https://tonapi.io/v2/jettons/${JETTON_ADDRESS}`);
+        const fetchPriceData = () => fetchData(`https://tonapi.io/v2/rates?tokens=${JETTON_ADDRESS}&currencies=usd`);
+        const fetchPoolsData = () => fetchData(`https://tonapi.io/v2/jettons/${JETTON_ADDRESS}/pools`);
+
+        // --- UI Güncelleme Fonksiyonları ---
+        const updateTokenInfoUI = (data) => {
+            const { metadata, holders_count, total_supply } = data;
+            elements.jettonDescription.innerHTML = (metadata?.description || '').replace(/\n/g, '<br>');
+            elements.jettonDescription.classList.remove('skeleton');
+            elements.holders.textContent = parseInt(holders_count || 0).toLocaleString('en-US');
+            
+            if (total_supply && metadata?.decimals) {
+                const supply = (BigInt(total_supply) / BigInt(10 ** metadata.decimals)).toString();
+                elements.totalSupply.textContent = `${parseInt(supply).toLocaleString('en-US')} ${metadata.symbol}`;
+            } else {
+                elements.totalSupply.textContent = '---';
+            }
+            if (metadata?.address) {
+                const address = metadata.address;
+                elements.contract.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+            }
+        };
+
+        const updatePriceUI = (priceData, tokenData) => {
+            const price = priceData.rates?.[JETTON_ADDRESS]?.prices?.USD;
+            if (price) {
+                elements.price.textContent = `$${price.toPrecision(4)}`;
+                
+                const { total_supply } = tokenData;
+                const { decimals } = tokenData.metadata;
+                if (total_supply && decimals) {
+                    const supply = Number(BigInt(total_supply) / BigInt(10 ** decimals));
+                    const marketCap = supply * price;
+                    elements.marketCap.textContent = `$${formatNumber(marketCap)}`;
+                } else {
+                    elements.marketCap.textContent = '---';
+                }
+            } else {
+                elements.price.textContent = 'N/A';
+                elements.marketCap.textContent = 'N/A';
+            }
+        };
+
+        const updatePoolsUI = (poolsData) => {
+            let totalLiquidity = 0;
+            elements.poolsContainer.innerHTML = ''; // Clear skeleton
+
+            if (poolsData.pools && poolsData.pools.length > 0) {
+                poolsData.pools.forEach(pool => {
+                    totalLiquidity += pool.total_liquidity_usd;
+                    
+                    const poolCard = document.createElement('a');
+                    poolCard.href = pool.main_page;
+                    poolCard.target = '_blank';
+                    poolCard.className = 'flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/50 transition-all duration-300 hover:shadow-lg hover:dark:bg-slate-700/50 hover:-translate-y-1';
+                    
+                    const dexLogo = {
+                        'ston.fi': 'https://s3.tradingview.com/userpics/6265775-v5o5_orig.png',
+                        'dedust': 'https://dedust.io/logo_black.svg'
+                    }[pool.dex] || `https://placehold.co/40x40/cccccc/ffffff?text=${pool.dex.charAt(0).toUpperCase()}`;
+                    
+                    poolCard.innerHTML = `
+                        <img src="${dexLogo}" alt="${pool.dex}" class="w-10 h-10 rounded-full bg-white p-1">
+                        <div class="flex-grow">
+                            <div class="font-medium text-slate-800 dark:text-slate-200">${pool.dex}</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                ${pool.assets.map(a => a.metadata.symbol).join('/')}
+                                <span class="font-bold text-green-600 dark:text-green-500 ml-2">$${formatNumber(pool.total_liquidity_usd)}</span>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-slate-400 dark:text-slate-500 text-base ml-auto">open_in_new</span>
+                    `;
+                    elements.poolsContainer.appendChild(poolCard);
+                });
+            } else {
+                elements.poolsContainer.innerHTML = `<p class="text-sm text-slate-500 dark:text-slate-400 col-span-full text-center">No active liquidity pools found.</p>`;
+            }
+            
+            elements.liquidity.textContent = `$${formatNumber(totalLiquidity)}`;
+        };
+
+        // --- Olay Dinleyicileri ve Başlatma ---
+        const setupEventListeners = () => {
+            const tg = window.Telegram.WebApp;
+            elements.clickableCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    tg.HapticFeedback.impactOccurred('light');
+                    const link = card.dataset.link || card.dataset.tgLink;
+                    if (card.dataset.link) tg.openLink(link);
+                    if (card.dataset.tgLink) tg.openTelegramLink(link);
+                });
+            });
+            
+            elements.contractCard.addEventListener('click', () => {
+                tg.HapticFeedback.impactOccurred('light');
+                tg.openLink(`https://tonviewer.com/${JETTON_ADDRESS}`);
+            });
+
+            const toggleOffcanvas = () => {
+                elements.offcanvasPanel.classList.toggle('translate-x-full');
+                elements.offcanvasBackdrop.classList.toggle('hidden');
+            };
+            elements.infoBtn.addEventListener('click', toggleOffcanvas);
+            elements.closeOffcanvasBtn.addEventListener('click', toggleOffcanvas);
+            elements.offcanvasBackdrop.addEventListener('click', toggleOffcanvas);
+
+            const toggleLanguageModal = () => {
+                elements.languageModal.classList.toggle('translate-y-full');
+                elements.languageModalBackdrop.classList.toggle('hidden');
+            };
+            elements.languageBtn.addEventListener('click', toggleLanguageModal);
+            elements.languageModalBackdrop.addEventListener('click', toggleLanguageModal);
+            elements.langOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    setLanguage(option.dataset.lang);
+                    toggleLanguageModal();
+                });
+            });
+        };
+
+        const setLanguage = (lang) => {
+            document.documentElement.lang = lang;
+            const langStrings = translations[lang];
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.dataset.translateKey;
+                if (langStrings[key]) {
+                    el.textContent = langStrings[key];
+                }
+            });
+            localStorage.setItem('appLanguage', lang);
+        };
+        
         document.addEventListener('DOMContentLoaded', () => {
             const tg = window.Telegram.WebApp;
             try {
                 tg.ready();
                 tg.expand();
-            } catch (e) {
-                console.warn("Telegram WebApp is not available.");
-            }
+            } catch (e) { console.warn("Telegram WebApp is not available."); }
 
-            // --- Stil Uygulaması ---
             applyStyles('.service-card', STYLES.serviceCard);
             applyStyles('.service-card .description', STYLES.serviceDesc);
             applyStyles('.service-card .arrow-icon', STYLES.arrowIcon);
@@ -245,170 +454,28 @@
             applyStyles('.community-card i, .community-card .material-symbols-outlined', STYLES.communityIcon);
             applyStyles('.community-card span', STYLES.communityText);
 
-            // --- DOM Elementleri ---
-            const elements = {
-                splashScreen: document.getElementById('splash-screen'),
-                infoBtn: document.getElementById('info-btn'),
-                languageBtn: document.getElementById('language-btn'),
-                offcanvasPanel: document.getElementById('offcanvas-panel'),
-                offcanvasBackdrop: document.getElementById('offcanvas-backdrop'),
-                closeOffcanvasBtn: document.getElementById('close-offcanvas-btn'),
-                languageModal: document.getElementById('language-modal'),
-                languageModalBackdrop: document.getElementById('language-modal-backdrop'),
-                langOptions: document.querySelectorAll('.lang-option'),
-                topHolderCount: document.getElementById('top-holder-count'),
-                topTotalSupply: document.getElementById('top-total-supply'),
-                topContract: document.getElementById('top-contract'),
-                clickableCards: document.querySelectorAll('[data-link], [data-tg-link]'),
-                toastNotification: document.getElementById('toastNotification'),
-                welcomeMessage: document.getElementById('welcome-message'),
-                topContractCard: document.getElementById('top-contract-card'),
-                jettonDescription: document.getElementById('jettonDescription'),
-            };
-
-            // --- Çeviriler ---
-            const translations = {
-                en: {
-                    welcome: "Welcome, ",
-                    services_title: "Services",
-                    community_title: "Community",
-                    about_project: "About Project",
-                    contract: "Contract",
-                    total_supply: "Total Supply",
-                    holders: "Holders",
-                    select_language: "Select Language",
-                    community_chat: "Chat",
-                    community_email: "E-Mail",
-                    service_movie_desc: "Free online Telegram Digital Content Platform. Like Netflix.",
-                    service_game_desc: "Play the legendary game 'aa' and more for free.",
-                    username_placeholder: "Enter your Telegram username..."
-                },
-                tr: {
-                    welcome: "Merhaba, ",
-                    services_title: "Servisler",
-                    community_title: "Topluluk",
-                    about_project: "Proje Hakkında",
-                    contract: "Kontrat",
-                    total_supply: "Toplam Arz",
-                    holders: "Sahipler",
-                    select_language: "Dil Seçin",
-                    community_chat: "Sohbet",
-                    community_email: "E-Posta",
-                    service_movie_desc: "Ücretsiz online Telegram Dijital İçerik Platformu. Netflix gibi.",
-                    service_game_desc: "Efsane oyun 'aa' ve daha fazlasını ücretsiz oyna.",
-                    username_placeholder: "Telegram kullanıcı adınızı girin..."
-                },
-                ku: {
-                    welcome: "Bi xêr hatî, ",
-                    services_title: "Xizmet",
-                    community_title: "Civat",
-                    about_project: "Derbarê Projeyê",
-                    contract: "Peyman",
-                    total_supply: "Tevahî Pêşkêşî",
-                    holders: "Xwedî",
-                    select_language: "Ziman Hilbijêre",
-                    community_chat: "Sohbet",
-                    community_email: "E-name",
-                    service_movie_desc: "Platforma Naveroka Dîjîtal a Telegramê ya serhêl a belaş. Mîna Netflix.",
-                    service_game_desc: "Lîstika efsanewî 'aa' û bêtir belaş bilîzin.",
-                    username_placeholder: "Navê xwe yê bikarhênerê Telegram binivîse..."
-                }
-            };
-            
-            // --- Fonksiyonlar ---
-            const setLanguage = (lang) => {
-                document.documentElement.lang = lang;
-                const langStrings = translations[lang];
-                document.querySelectorAll('[data-translate-key]').forEach(el => {
-                    const key = el.dataset.translateKey;
-                    if (langStrings[key]) {
-                        if (el.dataset.translateType === 'placeholder') {
-                            el.placeholder = langStrings[key];
-                        } else if (key === 'welcome') {
-                            const userName = tg.initDataUnsafe?.user?.first_name || '';
-                            el.textContent = langStrings[key] + userName;
-                        } else {
-                            el.textContent = langStrings[key];
-                        }
-                    }
-                });
-                localStorage.setItem('appLanguage', lang);
-            };
-
-            const fetchTokenData = async () => {
-                const jettonAddress = 'EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap';
-                const apiUrl = `https://tonapi.io/v2/jettons/${jettonAddress}`;
-                try {
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                    const data = await response.json();
-                    updateUI(data);
-                } catch (error) {
-                    console.error('Veri çekme hatası:', error);
-                }
-            };
-
-            const updateUI = (data) => {
-                const { metadata, holders_count, total_supply } = data;
-                elements.jettonDescription.innerHTML = (metadata?.description || '').replace(/\n/g, '<br>');
-                elements.jettonDescription.classList.remove('skeleton'); 
-                elements.topHolderCount.textContent = holders_count?.toLocaleString('en-US') || '---';
-                if (total_supply && metadata?.decimals) {
-                    const supply = (BigInt(total_supply) / BigInt(10 ** metadata.decimals)).toString();
-                    elements.topTotalSupply.textContent = `${parseInt(supply).toLocaleString('en-US')} ${metadata.symbol}`;
-                } else {
-                    elements.topTotalSupply.textContent = '---';
-                }
-                if (metadata?.address) {
-                    const address = metadata.address;
-                    elements.topContract.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-                }
-            };
-
-            const setupEventListeners = () => {
-                elements.clickableCards.forEach(card => {
-                    card.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        tg.HapticFeedback.impactOccurred('light');
-                        const link = card.dataset.link || card.dataset.tgLink;
-                        if (card.dataset.link) tg.openLink(link);
-                        if (card.dataset.tgLink) tg.openTelegramLink(link);
-                    });
-                });
-                
-                elements.topContractCard.addEventListener('click', () => {
-                    tg.HapticFeedback.impactOccurred('light');
-                    tg.openLink(`https://tonviewer.com/EQDVazmnZdangGkxS8Leytry3xkdYL6LjOIGsy_yGesS5vap`);
-                });
-
-                const toggleOffcanvas = () => {
-                    elements.offcanvasPanel.classList.toggle('translate-x-full');
-                    elements.offcanvasBackdrop.classList.toggle('hidden');
-                };
-                elements.infoBtn.addEventListener('click', toggleOffcanvas);
-                elements.closeOffcanvasBtn.addEventListener('click', toggleOffcanvas);
-                elements.offcanvasBackdrop.addEventListener('click', toggleOffcanvas);
-
-                const toggleLanguageModal = () => {
-                    elements.languageModal.classList.toggle('translate-y-full');
-                    elements.languageModalBackdrop.classList.toggle('hidden');
-                };
-                elements.languageBtn.addEventListener('click', toggleLanguageModal);
-                elements.languageModalBackdrop.addEventListener('click', toggleLanguageModal);
-                elements.langOptions.forEach(option => {
-                    option.addEventListener('click', () => {
-                        setLanguage(option.dataset.lang);
-                        toggleLanguageModal();
-                    });
-                });
-            };
-
             const init = async () => {
                 const savedLang = localStorage.getItem('appLanguage') || 'tr';
                 setLanguage(savedLang);
-                
                 setupEventListeners();
-                await fetchTokenData();
+
+                try {
+                    const [tokenData, priceData, poolsData] = await Promise.all([
+                        fetchTokenData(),
+                        fetchPriceData(),
+                        fetchPoolsData()
+                    ]);
+                    
+                    if (tokenData) {
+                        updateTokenInfoUI(tokenData);
+                        if (priceData) updatePriceUI(priceData, tokenData);
+                    }
+                    if (poolsData) updatePoolsUI(poolsData);
+
+                } catch (error) {
+                    console.error('Failed to fetch initial data:', error);
+                    // Handle critical fetch error if needed
+                }
 
                 setTimeout(() => {
                     elements.splashScreen.classList.add('opacity-0');
