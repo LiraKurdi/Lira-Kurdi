@@ -1,0 +1,119 @@
+/* assets/css/style.css - TAM DOSYA İÇERİĞİ */
+
+/* Genel Değişkenler */
+:root {
+    --bg-color: #f4f4f5; --text-color: #18181b;
+    --secondary-bg-color: #ffffff; --hint-color: #71717a;
+    --primary-color: #2563eb; --primary-text-color: #ffffff;
+    --border-color: #e4e4e7;
+}
+html.dark {
+    --bg-color: #000000; --text-color: #fafafa;
+    --secondary-bg-color: #18181b; --hint-color: #a1a1aa;
+    --primary-color: #3b82f6; --primary-text-color: #fafafa;
+    --border-color: #27272a;
+}
+body {
+    font-family: 'Inter', sans-serif; background-color: var(--bg-color);
+    color: var(--text-color);
+    padding-top: 5rem;
+    padding-bottom: 6rem;
+}
+.card { background-color: var(--secondary-bg-color); border: 1px solid var(--border-color); }
+@keyframes pulse { 50% { opacity: .7; } }
+.skeleton { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: rgba(128,128,128,0.2); border-radius: 0.375rem; }
+.hint-color { color: var(--hint-color); }
+
+/* *********** YENİ YÜZEN NAVBAR TASARIMI - GÖLGE VE YAZI DÜZELTMESİ *********** */
+#navbar-container {
+    display: flex; height: 60px;
+    background-color: var(--secondary-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 9999px; /* Pill shape */
+    
+    /* DEĞİŞİKLİK 1: Gölge daha kaliteli ve çepeçevre olacak şekilde güncellendi */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+
+    position: absolute; left: 50%; transform: translateX(-50%);
+}
+html.dark #navbar-container {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column; /* İKON ÜSTTE, YAZI ALTTA */
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 100%;
+    color: var(--hint-color);
+    transition: color 0.3s ease;
+}
+.nav-text {
+    font-size: 0.7rem;
+    font-weight: 500;
+    margin-top: 3px;
+    
+    /* DEĞİŞİKLİK 2: Yazıların her zaman görünür olması için opacity kuralları kaldırıldı */
+    /* opacity: 0; satırı silindi */
+    /* transition: opacity 0.3s ease; satırı silindi */
+}
+
+/* Aktif butonun rengi */
+.nav-button.active {
+    color: var(--primary-color);
+}
+/* .nav-button.active .nav-text { opacity: 1; } kuralı artık gereksiz olduğu için silindi */
+
+/* Animasyonlu arka plan göstergesi */
+#nav-active-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    background-color: var(--primary-color);
+    opacity: 0.1;
+    border-radius: 9999px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* ************************************************************ */
+
+/* Diğer Sayfaların Stilleri (Değişiklik yok) */
+.theme-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(22px); }
+.earn-card-header { background: linear-gradient(45deg, #1e3a8a, #3b82f6); }
+html.dark .earn-card-header { background: linear-gradient(45deg, #1e293b, #27374f); }
+.stat-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
+.stat-item:last-child { border-bottom: none; }
+.dropdown-menu { position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.5rem; z-index: 10; transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
+.dropdown-menu.hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+.advantage-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
+.advantage-item:last-child { border-bottom: none; padding-bottom: 0; }
+.advantage-item:first-child { padding-top: 0; }
+.advantage-icon { flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 9999px; background-color: var(--primary-color); color: var(--primary-text-color); opacity: 0.1; }
+.advantage-icon .material-symbols-outlined { font-size: 20px; color: var(--primary-color); }
+
+/* assets/css/style.css - Sadece eklenecek kısım, dosyanın sonuna yapıştırın */
+
+/* ... (dosyanın mevcut içeriği burada) ... */
+
+/* YENİ EKLENEN APP STORE TASARIMI STİLLERİ */
+.category-title {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 700; /* bold */
+    padding-bottom: 0.75rem; /* 12px */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.app-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* 16px */
+    padding: 0.75rem 0;
+}
